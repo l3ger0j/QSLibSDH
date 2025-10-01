@@ -90,30 +90,31 @@ abstract class QSLibSDH {
     external fun selectMenuItem(index: Int)
 
     // --- Callbacks from Native Code ---
-    abstract fun callDebug(str: String?)
-    abstract fun refreshInt()
+    open fun onCallDebug(str: String?) {}
+    open fun onRefreshInt() {}
 
-    abstract fun onShowImage(path: String?)
-    abstract fun onShowMessage(message: String?)
-    abstract fun onShowWindow(type: Int, isShow: Boolean)
+    open fun onShowImage(path: String?) {}
+    open fun onShowMessage(message: String?) {}
+    open fun onShowWindow(type: Int, isShow: Boolean) {}
 
-    abstract fun onPlayFile(path: String?, volume: Int)
-    abstract fun onIsPlayingFile(path: String?): Boolean
-    abstract fun onCloseFile(path: String?)
+    open fun onPlayFile(path: String?, volume: Int) {}
+    open fun onIsPlayingFile(path: String?): Boolean = false
+    open fun onCloseFile(path: String?) {}
 
-    abstract fun onChangeQuestPath(path: String?)
-    abstract fun onOpenGameStatus(filename: String?)
-    abstract fun onSaveGameStatus(filename: String?)
+    open fun onOpenGame(path: String?) {}
+    open fun onOpenGameStatus(filename: String?) {}
+    open fun onSaveGameStatus(filename: String?) {}
 
-    abstract fun onInputBox(prompt: String?): String
+    open fun onInputBox(prompt: String?): String = ""
 
-    abstract fun onSetTimer(msecs: Int)
-    abstract fun onGetMsCount(): Int
-    abstract fun onSleep(msecs: Int)
+    open fun onSetTimer(msecs: Int) {}
+    open fun onGetMsCount(): Int = 0
+    open fun onSleep(msecs: Int) {}
 
-    abstract fun onAddMenuItem(name: String?, imgPath: String?)
-    abstract fun onShowMenu()
-    abstract fun onDeleteMenu()
+    open fun onAddMenuItem(name: String?, imgPath: String?) {}
+    open fun onShowMenuOld() {}
+    open fun onShowMenuNew(): Int = -1
+    open fun onDeleteMenu() {}
 
-    abstract fun onGetFileContents(path: String?): ByteArray?
+    open fun onGetFileContents(path: String?): ByteArray? = null
 }
