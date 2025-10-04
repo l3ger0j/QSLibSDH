@@ -63,6 +63,7 @@
 	#include "../qsp.h"
 	#include "com_libsdhqs_jni_QSLibSDH.h"
 
+	extern JavaVM *ndkJvm;
 	extern jclass ndkApiClass;
 	extern jobject ndkApiObject;
 

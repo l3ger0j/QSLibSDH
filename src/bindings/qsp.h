@@ -79,7 +79,7 @@
 		QSP_CALL_SLEEP, /* void func(int msecs) */
 		QSP_CALL_GETMSCOUNT, /* int func() */
 		QSP_CALL_INPUTBOX, /* void func(const QSP_CHAR *text, QSP_CHAR *buffer, int maxLen) */
-		#ifdef _ANDROID
+		#ifdef _JVM_BINDING
 		QSP_CALL_GETFILECONTENT,
 		QSP_CALL_CHANGEQUESTPATH,
 		#endif
