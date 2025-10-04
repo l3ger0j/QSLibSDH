@@ -168,6 +168,16 @@ INLINE FILE *qspFileOpen(QSP_CHAR *fileName, QSP_CHAR *fileMode)
 	return ret;
 }
 
+INLINE FILE *qspFileDescOpen(int fd, QSP_CHAR *fileMode)
+{
+	FILE *ret;
+	char *mode;
+	mode = qspFromQSPString(fileMode);
+	ret = fdopen(fd, mode);
+	free(mode);
+	return ret;
+}
+
 INLINE QSP_BOOL qspCheckQuest(char **strs, int count, QSP_BOOL isUCS2)
 {
 	int i, ind, locsCount, actsCount;
@@ -307,7 +317,7 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 void qspOpenQuestFromFD(int fd, QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 {
 	FILE * f;
-	if (!((f = _fdopen(fd, "rb"))))
+	if (!((f = QSP_FDOPEN(fd, QSP_FMT("rb")))))
 	{
 		qspSetError(QSP_ERR_FILENOTFOUND);
 		return;

@@ -45,8 +45,10 @@
 
 		#ifdef _MSC_VER
 			#define QSP_FOPEN _wfopen
+			#define QSP_FDOPEN _wfdopen
 		#else
 			#define QSP_FOPEN qspFileOpen
+			#define QSP_FDOPEN qspFileDescOpen
 		#endif
 	#else
 		#error "Non-Unicode build using Android binding is not supported"

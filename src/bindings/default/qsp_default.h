@@ -36,9 +36,11 @@
 		#define QSP_BTOWC
 
 		#ifdef _MSC_VER
-			#define QSP_FOPEN _wfdopen
+			#define QSP_FOPEN _wfopen
+			#define QSP_FDOPEN _wfdopen
 		#else
 			#define QSP_FOPEN qspFileOpen
+			#define QSP_FDOPEN qspFileDescOpen
 		#endif
 	#else
 		typedef char QSP_CHAR;
