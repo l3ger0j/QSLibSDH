@@ -61,7 +61,7 @@
 	typedef jmethodID QSP_CALLBACK;
 
 	#include "../qsp.h"
-	#include "../android/org_libndkqsp_jni_NDKLib.h"
+	#include "com_libsdhqs_jni_QSLibSDH.h"
 
 	extern jclass ndkApiClass;
 	extern jobject ndkApiObject;
