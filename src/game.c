@@ -78,6 +78,7 @@ int qspCRCTable[256] =
 INLINE int qspCRC(void *, int);
 INLINE void qspOpenIncludes();
 INLINE FILE *qspFileOpen(QSP_CHAR *, QSP_CHAR *);
+INLINE FILE *qspFileDescOpen(int, QSP_CHAR *);
 INLINE QSP_BOOL qspCheckQuest(char **, int, QSP_BOOL);
 INLINE QSP_BOOL qspCheckGameStatus(QSP_CHAR **, int);
 
