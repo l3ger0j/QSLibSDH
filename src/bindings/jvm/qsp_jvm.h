@@ -17,8 +17,8 @@
 
 #include <jni.h>
 
-#ifndef QSP_ANDROIDDEFINES
-	#define QSP_ANDROIDDEFINES
+#ifndef QSP_JVMDEFINES
+	#define QSP_JVMDEFINES
 
 	#ifdef _UNICODE
 		#ifdef _WIN32
