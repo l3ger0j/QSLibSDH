@@ -21,6 +21,7 @@
 	/* JVM binding */
 	#ifdef _JVM
 		#define QSP_BINDING
+		#define _JVM_BINDING
 		#include "jvm/qsp_jvm.h"
 	#endif
 

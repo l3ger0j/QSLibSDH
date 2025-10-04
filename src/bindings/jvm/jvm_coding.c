@@ -17,7 +17,7 @@
 
 #include "../../declarations.h"
 
-#ifdef _ANDROID
+#ifdef _JVM_BINDING
 
 #include "../../text.h"
 
