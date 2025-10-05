@@ -159,7 +159,7 @@ configure_package_config_file(QspConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cma
 )
 
 export(TARGETS ${QSLIBSDH_INSTALL_TARGETS} NAMESPACE Qsp:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QspTargets.cmake)
-install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp")
+install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp" NAMELINK_COMPONENT)
 
 install(
 		DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cmake
