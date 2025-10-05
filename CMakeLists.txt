@@ -137,17 +137,6 @@ target_include_directories(qslibsdh
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/src/default>"
 )
 
-set(QSLIBSDH_INSTALL_TARGETS qslibsdh)
-
-if (TARGET onig)
-	get_target_property(ONIG_IS_IMPORTED onig IMPORTED)
-	if (NOT ONIG_IS_IMPORTED)
-		list(APPEND QSLIBSDH_INSTALL_TARGETS onig)
-	endif()
-endif()
-
-install(TARGETS ${QSLIBSDH_INSTALL_TARGETS} EXPORT QspTargets)
-
 generate_export_header(qslibsdh
 		BASE_NAME Qsp
 		EXPORT_MACRO_NAME QSP_EXTERN
@@ -158,8 +147,20 @@ configure_package_config_file(QspConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cma
 		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp"
 )
 
+set(QSLIBSDH_INSTALL_TARGETS qslibsdh)
+
+if (TARGET onig)
+	get_target_property(ONIG_IS_IMPORTED onig IMPORTED)
+	if (NOT ONIG_IS_IMPORTED)
+		list(APPEND QSLIBSDH_INSTALL_TARGETS onig)
+	endif()
+endif()
+
 export(TARGETS ${QSLIBSDH_INSTALL_TARGETS} NAMESPACE Qsp:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QspTargets.cmake)
-install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp" NAMELINK_COMPONENT)
+
+install(TARGETS ${QSLIBSDH_INSTALL_TARGETS} EXPORT QspTargets)
+
+install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp")
 
 install(
 		DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cmake
