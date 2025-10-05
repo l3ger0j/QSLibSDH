@@ -6,18 +6,26 @@ set(QSP_GAMEMIN_VER "5.7.0")
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 include(GNUInstallDirs)
+include(FetchContent)
+
+option(BUILD_JVM "Build with JVM bindings" OFF)
+option(USE_INSTALLED_ONIGURUMA "Use system-wide oniguruma library instead of bundling it" OFF)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_BUILD_RPATH_USE_ORIGIN ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 set(TARGET qslibsdh PROPERTY CMAKE_C_STANDARD 17)
 set(TARGET qslibsdh PROPERTY CMAKE_C_STANDARD_REQUIRED ON)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    set(PROJECT_COMPILER_FLAGS "-Wall")
-    set(PROJECT_LINKER_FLAGS "")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-char-subscripts -Wno-unused-variable")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -D_DEBUG -DDEBUG")
@@ -25,16 +33,12 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -DNDEBUG")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
-    set(PROJECT_COMPILER_FLAGS "/W4")
-    set(PROJECT_LINKER_FLAGS "")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D_DEBUG /DDEBUG")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_DEBUG /DDEBUG")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
-    set(PROJECT_COMPILER_FLAGS "")
-    set(PROJECT_LINKER_FLAGS "")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -D_DEBUG -DDEBUG")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -D_DEBUG -DDEBUG")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast -DNDEBUG")
@@ -43,21 +47,18 @@ else()
     message(FATAL_ERROR "Compiler is not supported")
 endif()
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-
-option(USE_INSTALLED_ONIGURUMA "Use system-wide oniguruma library instead of bundling it" OFF)
-
 if (USE_INSTALLED_ONIGURUMA)
 	find_package(oniguruma REQUIRED)
 else()
-	# Download and unpack oniguruma at configure time
-	configure_file(CMakeLists-oniguruma.txt.in "${CMAKE_BINARY_DIR}/oniguruma-download/CMakeLists.txt")
-	execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" "-DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}" .
-					WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/oniguruma-download"
-	)
-	execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-					WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/oniguruma-download"
+	# Download oniguruma
+	FetchContent_Declare(oniguruma-custom
+			GIT_REPOSITORY https://github.com/kkos/oniguruma.git
+			GIT_TAG master
+			GIT_SHALLOW true # it works only with branch names and tags
+			GIT_PROGRESS true
+			SUBBUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/oniguruma-download"
+			SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/oniguruma-src"
+			BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/oniguruma-build"
 	)
 
 	# Disable oniguruma features we don't need
@@ -74,11 +75,7 @@ else()
 	add_compile_definitions(USE_CRNL_AS_LINE_TERMINATOR=1)
 
 	# Add oniguruma directly to our build
-	set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
-	set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
-	add_subdirectory("${CMAKE_BINARY_DIR}/oniguruma-src"
-					 "${CMAKE_BINARY_DIR}/oniguruma-build"
-	)
+	FetchContent_MakeAvailable(oniguruma-custom)
 	add_library(oniguruma::onig ALIAS onig)
 endif()
 
@@ -120,8 +117,6 @@ target_compile_definitions(qslibsdh PUBLIC _UNICODE)
 if (WIN32)
 	target_compile_definitions(qslibsdh PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
-target_compile_options(qslibsdh PRIVATE ${PROJECT_COMPILER_FLAGS})
-target_link_options(qslibsdh PRIVATE ${PROJECT_LINKER_FLAGS})
 target_link_libraries(qslibsdh PRIVATE oniguruma::onig)
 
 if (BUILD_JVM)
@@ -136,12 +131,22 @@ endif()
 target_include_directories(qslibsdh
 		INTERFACE
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/bindings/default>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/bindings>"
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/src>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/src/default>"
 )
 
-install(TARGETS qslibsdh onig EXPORT QspTargets)
+set(QSLIBSDH_INSTALL_TARGETS qslibsdh)
+
+if (TARGET onig)
+	get_target_property(ONIG_IS_IMPORTED onig IMPORTED)
+	if (NOT ONIG_IS_IMPORTED)
+		list(APPEND QSLIBSDH_INSTALL_TARGETS onig)
+	endif()
+endif()
+
+install(TARGETS ${QSLIBSDH_INSTALL_TARGETS} EXPORT QspTargets)
 
 generate_export_header(qslibsdh
 		BASE_NAME Qsp
@@ -153,8 +158,8 @@ configure_package_config_file(QspConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cma
 		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp"
 )
 
-export(TARGETS qslibsdh onig NAMESPACE Qsp:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QspConfig.cmake)
-install(EXPORT QspTargets NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp")
+export(TARGETS ${QSLIBSDH_INSTALL_TARGETS} NAMESPACE Qsp:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QspTargets.cmake)
+install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp")
 
 install(
 		DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cmake
