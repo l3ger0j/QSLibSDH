@@ -288,7 +288,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isObjectsChanged(JNIEn
 
 /* Get the number of array elements */
 //QSP_BOOL QSPGetVarValuesCount(const QSP_CHAR *name, int *count)
-JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarValuesCount(JNIEnv *env, jobject this, jstring name)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarValuesCount(JNIEnv *env, jobject this, jstring name)
 {
 	//!!!STUB
 	//{
