@@ -48,13 +48,13 @@ jclass ndkVarValResp;
 /* Debugging */
 
 /* Managing the debugging mode */
-JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_enableDebugMode(JNIEnv *env, jobject this, jboolean isDebug)
+JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_enableDebugMode(JNIEnv *env, jobject this, jboolean isDebug)
 {
 	qspIsDebug = isDebug;
 }
 
 /* Getting current state data */
-JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getCurStateData(JNIEnv *env, jobject this)
+JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getCurStateData(JNIEnv *env, jobject this)
 {
 	jfieldID fieldId;
 	QSP_CHAR *locName;
@@ -77,31 +77,31 @@ JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getCurStateData(JNIEnv *
 /* Version Information */
 
 /* Version */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getVersion(JNIEnv *env, jobject this)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVersion(JNIEnv *env, jobject this)
 {
 	return ndkToJavaString(env, QSP_VER);
 }
 
 /* Date and time of compilation */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getCompiledDateTime(JNIEnv *env, jobject this)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getCompiledDateTime(JNIEnv *env, jobject this)
 {
 	return ndkToJavaString(env, QSP_FMT(__DATE__) QSP_FMT(", ") QSP_FMT(__TIME__));
 }
 /* ------------------------------------------------------------ */
 /* Number of full location updates */
-JNIEXPORT jint JNICALL Java_org_libndkqsp_jni_NDKLib_getFullRefreshCount(JNIEnv *env, jobject this)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getFullRefreshCount(JNIEnv *env, jobject this)
 {
 	return qspFullRefreshCount;
 }
 /* ------------------------------------------------------------ */
 /* Full path to the downloaded game file */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getQstFullPath(JNIEnv *env, jobject this)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getQstFullPath(JNIEnv *env, jobject this)
 {
 	return ndkToJavaString(env, qspQstFullPath);
 }
 /* ------------------------------------------------------------ */
 /* Name of the current location */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getCurLoc(JNIEnv *env, jobject this)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getCurLoc(JNIEnv *env, jobject this)
 {
 	return ndkToJavaString(env, qspCurLoc >= 0 ? qspLocs[qspCurLoc].Name : 0);
 }
@@ -109,13 +109,13 @@ JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getCurLoc(JNIEnv *env, j
 /* Basic description of the location */
 
 /* Text of the main location description window */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getMainDesc(JNIEnv *env, jobject this)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getMainDesc(JNIEnv *env, jobject this)
 {
 	return ndkToJavaString(env, qspCurDesc);
 }
 
 /* The ability to change the text of the main description */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_isMainDescChanged(JNIEnv *env, jobject this)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isMainDescChanged(JNIEnv *env, jobject this)
 {
 	return qspIsMainDescChanged;
 }
@@ -123,13 +123,13 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_isMainDescChanged(JNIEn
 /* Additional description of the location */
 
 /* Text of the additional location description window */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getVarsDesc(JNIEnv *env, jobject this)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarsDesc(JNIEnv *env, jobject this)
 {
 	return ndkToJavaString(env, qspCurVars);
 }
 
 /* Possibility to change the text of the additional description */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_isVarsDescChanged(JNIEnv *env, jobject this)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isVarsDescChanged(JNIEnv *env, jobject this)
 {
 	return qspIsVarsDescChanged;
 }
@@ -137,7 +137,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_isVarsDescChanged(JNIEn
 /* ------------------------------------------------------------ */
 /* Get the value of the specified expression */
 //(const QSP_CHAR *expr, QSP_BOOL *isString, int *numVal, QSP_CHAR *strVal, int strValBufSize)
-JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getExprValue(JNIEnv *env, jobject this)
+JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getExprValue(JNIEnv *env, jobject this)
 {
 	//!!!STUB
 	//{
@@ -162,7 +162,7 @@ JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getExprValue(JNIEnv *env
 }
 /* ------------------------------------------------------------ */
 /* Text of the input line */
-JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_setInputStrText(JNIEnv *env, jobject this, jstring val)
+JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_setInputStrText(JNIEnv *env, jobject this, jstring val)
 {
 	QSP_CHAR *strConverted = ndkFromJavaString(env, val);
 	qspCurInputLen = qspAddText(&strConverted, strConverted, 0, -1, QSP_FALSE);
@@ -172,13 +172,13 @@ JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_setInputStrText(JNIEnv *env
 /* List of actions */
 
 /* Number of actions */
-JNIEXPORT jint JNICALL Java_org_libndkqsp_jni_NDKLib_QSPGetActionsCount(JNIEnv *env, jobject this)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getActionsCount(JNIEnv *env, jobject this)
 {
 	return qspCurActionsCount;
 }
 
 /* Data actions with the specified index */
-JNIEXPORT jobjectArray JNICALL Java_org_libndkqsp_jni_NDKLib_getActionData(JNIEnv *env, jobject this)
+JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getActionData(JNIEnv *env, jobject this)
 {
 	int i;
 	JNIListItem item;
@@ -192,7 +192,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_libndkqsp_jni_NDKLib_getActionData(JNIEn
 }
 
 /* Executing the code of the selected action */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_executeSelActionCode(JNIEnv *env, jobject this, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_executeSelActionCode(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	if (qspCurSelAction >= 0)
 	{
@@ -207,7 +207,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_executeSelActionCode(JN
 }
 
 /* Set the index of the selected action */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_setSelActionIndex(JNIEnv *env, jobject this, jint ind, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_setSelActionIndex(JNIEnv *env, jobject this, jint ind, jboolean isRefresh)
 {
 	if (ind >= 0 && ind < qspCurActionsCount && ind != qspCurSelAction)
 	{
@@ -223,13 +223,13 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_setSelActionIndex(JNIEn
 }
 
 /* Get the index of the selected action */
-JNIEXPORT jint JNICALL Java_org_libndkqsp_jni_NDKLib_QSPGetSelActionIndex(JNIEnv *env, jobject this)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getSelActionIndex(JNIEnv *env, jobject this)
 {
 	return qspCurSelAction;
 }
 
 /* Ability to change the list of actions */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_QSPIsActionsChanged(JNIEnv *env, jobject this)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isActionsChanged(JNIEnv *env, jobject this)
 {
 	return qspIsActionsChanged;
 }
@@ -237,13 +237,13 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_QSPIsActionsChanged(JNI
 /* List of objects */
 
 /* Number of objects */
-JNIEXPORT jint JNICALL Java_org_libndkqsp_jni_NDKLib_QSPGetObjectsCount(JNIEnv *env, jobject this)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getObjectsCount(JNIEnv *env, jobject this)
 {
 	return qspCurObjectsCount;
 }
 
 /* Object data with the specified index */
-JNIEXPORT jobjectArray JNICALL Java_org_libndkqsp_jni_NDKLib_getObjectData(JNIEnv *env, jobject this)
+JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getObjectData(JNIEnv *env, jobject this)
 {
 	int i;
 	JNIListItem item;
@@ -257,7 +257,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_libndkqsp_jni_NDKLib_getObjectData(JNIEn
 }
 
 /* Set the index of the selected object */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_setSelObjectIndex(JNIEnv *env, jobject this, jint ind, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_setSelObjectIndex(JNIEnv *env, jobject this, jint ind, jboolean isRefresh)
 {
 	if (ind >= 0 && ind < qspCurObjectsCount && ind != qspCurSelObject)
 	{
@@ -273,43 +273,22 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_setSelObjectIndex(JNIEn
 }
 
 /* Get the index of the selected object */
-JNIEXPORT jint JNICALL Java_org_libndkqsp_jni_NDKLib_QSPGetSelObjectIndex(JNIEnv *env, jobject this)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getSelObjectIndex(JNIEnv *env, jobject this)
 {
 	return qspCurSelObject;
 }
 
 /* Ability to change the list of objects */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_QSPIsObjectsChanged(JNIEnv *env, jobject this)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isObjectsChanged(JNIEnv *env, jobject this)
 {
 	return qspIsObjectsChanged;
-}
-/* ------------------------------------------------------------ */
-/* Show/hide windows */
-JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_QSPShowWindow(JNIEnv *env, jobject this, jint type, jboolean isShow)
-{
-	QSP_BOOL mIsShow = (QSP_BOOL)isShow;
-	switch (type)
-	{
-	case QSP_WIN_ACTS:
-		qspCurIsShowActs = mIsShow;
-		break;
-	case QSP_WIN_OBJS:
-		qspCurIsShowObjs = mIsShow;
-		break;
-	case QSP_WIN_VARS:
-		qspCurIsShowVars = mIsShow;
-		break;
-	case QSP_WIN_INPUT:
-		qspCurIsShowInput = mIsShow;
-		break;
-	}
 }
 /* ------------------------------------------------------------ */
 /* Variables */
 
 /* Get the number of array elements */
 //QSP_BOOL QSPGetVarValuesCount(const QSP_CHAR *name, int *count)
-JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getVarValuesCount(JNIEnv *env, jobject this, jstring name)
+JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarValuesCount(JNIEnv *env, jobject this, jstring name)
 {
 	//!!!STUB
 	//{
@@ -338,7 +317,7 @@ QSP_BOOL QSPGetVarValues(const QSP_CHAR *name, int ind, int *numVal, QSP_CHAR **
 	return QSP_TRUE;
 }
 
-JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getVarValues(JNIEnv *env, jobject this, jstring name, jint ind)
+JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarValues(JNIEnv *env, jobject this, jstring name, jint ind)
 {
 	//Convert array name to QSP string
 	QSP_CHAR *strConverted = ndkFromJavaString(env, name);
@@ -376,13 +355,13 @@ JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getVarValues(JNIEnv *env
 }
 
 /* Get the maximum number of variables */
-JNIEXPORT jint JNICALL Java_org_libndkqsp_jni_NDKLib_getMaxVarsCount(JNIEnv *env, jobject this)
+JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getMaxVarsCount(JNIEnv *env, jobject this)
 {
 	return QSP_VARSCOUNT;
 }
 
 /* Get the variable name with the specified index */
-JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getVarNameByIndex(JNIEnv *env, jobject this, jint index)
+JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarNameByIndex(JNIEnv *env, jobject this, jint index)
 {
 	//!!!STUB
 //{
@@ -396,7 +375,7 @@ JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getVarNameByIndex(JNIEnv
 /* Code Execution */
 
 /* Executing a line of code */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_execString(JNIEnv *env, jobject this, jstring s, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execString(JNIEnv *env, jobject this, jstring s, jboolean isRefresh)
 {
 	QSP_CHAR *strConverted = ndkFromJavaString(env, s);
 
@@ -411,7 +390,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_execString(JNIEnv *env,
 }
 
 /* Executing the code of the specified location */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_QSPExecLocationCode(JNIEnv *env, jobject this, jstring name, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execLocationCode(JNIEnv *env, jobject this, jstring name, jboolean isRefresh)
 {
 	QSP_CHAR *strConverted = ndkFromJavaString(env, name);
 
@@ -426,7 +405,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_QSPExecLocationCode(JNI
 }
 
 /* Execution of the location-counter code */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_execCounter(JNIEnv *env, jobject this, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execCounter(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	if (!qspIsInCallBack)
 	{
@@ -439,7 +418,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_execCounter(JNIEnv *env
 }
 
 /* Execution of the code of the input line handler location */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_execUserInput(JNIEnv *env, jobject this, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execUserInput(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	if (qspIsExitOnError && qspErrorNum) return JNI_FALSE;
 	qspPrepareExecution();
@@ -453,7 +432,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_execUserInput(JNIEnv *e
 /* Errors */
 
 /* Get information about the latest error */
-JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getLastErrorData(JNIEnv *env, jobject this)
+JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getLastErrorData(JNIEnv *env, jobject this)
 {
 	if (ndkErrorInfoClass == 0)
 		return NULL;
@@ -477,7 +456,7 @@ JNIEXPORT jobject JNICALL Java_org_libndkqsp_jni_NDKLib_getLastErrorData(JNIEnv 
 }
 
 /* Get a description of the error by its number */
-JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getErrorDesc(JNIEnv *env, jobject this, jint errorNum)
+JNIEXPORT jstring JNICALL Java_com_libsdhqs_jni_QSLibSDH_getErrorDesc(JNIEnv *env, jobject this, jint errorNum)
 {
 	QSP_CHAR *str;
 	switch (errorNum)
@@ -515,7 +494,7 @@ JNIEXPORT jstring JNICALL Java_org_libndkqsp_jni_NDKLib_getErrorDesc(JNIEnv *env
 }
 /* ------------------------------------------------------------ */
 /* Menu */
-JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_selectMenuItem(JNIEnv *env, jobject this, jint ind)
+JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env, jobject this, jint ind)
 {
 	QSPVariant arg;
 	if (ind >= 0 && ind < qspCurMenuItems)
@@ -547,7 +526,7 @@ QSP_BOOL QSPLoadGameWorldFromData(void *data, int dataSize, QSP_CHAR *fileName)
 	return QSP_TRUE;
 }
 
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName)
 {
 	/* We don't execute any game code here */
 	jint datSize = (*env)->GetArrayLength(env, data);
@@ -586,7 +565,7 @@ QSP_BOOL QSPSaveGameAsData(void **buf, int *realSize, QSP_BOOL isRefresh)
 	return QSP_TRUE;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_libndkqsp_jni_NDKLib_saveGameAsData__Z(JNIEnv *env, jobject this, jboolean isRefresh)
+JNIEXPORT jbyteArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameAsData__Z(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	void *buffer = NULL;
 	int bufferSize = 0;
@@ -622,7 +601,7 @@ QSP_BOOL QSPOpenSavedGameFromData(const void *data, int dataSize, QSP_BOOL isRef
 	return QSP_TRUE;
 }
 
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_openSavedGameFromData(JNIEnv *env, jobject this, jbyteArray data, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromData(JNIEnv *env, jobject this, jbyteArray data, jboolean isRefresh)
 {
 	QSP_BOOL res;
 	jint dataSize;
@@ -648,7 +627,7 @@ QSP_BOOL QSPOpenSavedGameFromString(const QSP_CHAR* str, QSP_BOOL isRefresh)
 }
 
 /* Restarting the game */
-JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_restartGame(JNIEnv *env, jobject this, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_restartGame(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	if (qspIsExitOnError && qspErrorNum) return JNI_FALSE;
 	qspPrepareExecution();
@@ -666,7 +645,7 @@ JNIEXPORT jboolean JNICALL Java_org_libndkqsp_jni_NDKLib_restartGame(JNIEnv *env
 //}
 /* ------------------------------------------------------------ */
 /* Initialization */
-JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_init(JNIEnv *env, jobject this)
+JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject this)
 {
 	qspIsDebug = QSP_FALSE;
 	qspRefreshCount = qspFullRefreshCount = 0;
@@ -736,7 +715,7 @@ JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_init(JNIEnv *env, jobject t
 }
 
 /* Deinitialization */
-JNIEXPORT void JNICALL Java_org_libndkqsp_jni_NDKLib_terminate(JNIEnv *env, jobject this)
+JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_terminate(JNIEnv *env, jobject this)
 {
 	qspMemClear(QSP_FALSE);
 	qspCreateWorld(0, 0);
