@@ -698,7 +698,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject 
 	qspSetCallBack(QSP_CALL_CLOSEFILE, (*env)->GetMethodID(env, ndkApiClass, "onCloseFile", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SHOWIMAGE, (*env)->GetMethodID(env, ndkApiClass, "onShowImage", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SHOWWINDOW, (*env)->GetMethodID(env, ndkApiClass, "onShowWindow", "(IZ)V"));
-	qspSetCallBack(QSP_CALL_SHOWMENU, (*env)->GetMethodID(env, ndkApiClass, "onShowMenu", "()V"));
+	qspSetCallBack(QSP_CALL_SHOWMENU, (*env)->GetMethodID(env, ndkApiClass, "onShowMenuOld", "()V"));
 	qspSetCallBack(QSP_CALL_SHOWMSGSTR, (*env)->GetMethodID(env, ndkApiClass, "onShowMessage", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_REFRESHINT, (*env)->GetMethodID(env, ndkApiClass, "refreshInt", "()V"));
 	qspSetCallBack(QSP_CALL_SETTIMER, (*env)->GetMethodID(env, ndkApiClass, "onSetTimer", "(I)V"));
