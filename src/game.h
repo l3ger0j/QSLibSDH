@@ -43,8 +43,10 @@
 	void qspOpenQuestFromFD(int, QSP_CHAR *, QSP_BOOL);
 	void qspOpenQuest(QSP_CHAR *, QSP_BOOL);
 	int qspSaveGameStatusToString(QSP_CHAR **);
+	void qspSaveGameStatusByFD(int);
 	void qspSaveGameStatus(QSP_CHAR *);
 	void qspOpenGameStatusFromString(QSP_CHAR *);
+	void qspOpenGameStatusFromFD(int);
 	void qspOpenGameStatus(QSP_CHAR *);
 	/* Statements */
 	QSP_BOOL qspStatementOpenQst(QSPVariant *, int, QSP_CHAR **, int);

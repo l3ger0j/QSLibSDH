@@ -455,6 +455,24 @@ int qspSaveGameStatusToString(QSP_CHAR **buf)
 	return len;
 }
 
+void qspSaveGameStatusByFD(const int fd)
+{
+	FILE *f;
+	int len;
+	QSP_CHAR *buf;
+	if (!((f = QSP_FDOPEN(fd, QSP_FMT("wb")))))
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return;
+	}
+	if ((len = qspSaveGameStatusToString(&buf)))
+	{
+		fwrite(buf, sizeof(QSP_CHAR), len, f);
+		free(buf);
+	}
+	fclose(f);
+}
+
 void qspSaveGameStatus(QSP_CHAR *fileName)
 {
 	FILE *f;
@@ -666,6 +684,25 @@ void qspOpenGameStatusFromString(QSP_CHAR *str)
 	qspPlayPLFiles();
 	qspCallSetTimer(qspTimerInterval);
 	qspExecLocByVarNameWithArgs(QSP_FMT("ONGLOAD"), 0, 0);
+}
+
+void qspOpenGameStatusFromFD(const int fd)
+{
+	FILE *f;
+	if (!((f = QSP_FDOPEN(fd, QSP_FMT("rb")))))
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return;
+	}
+	fseek(f, 0, SEEK_END);
+	const int fileLen = ftell(f) / sizeof(QSP_CHAR);
+	QSP_CHAR *buf = malloc((fileLen + 1) * sizeof(QSP_CHAR));
+	fseek(f, 0, SEEK_SET);
+	fread(buf, sizeof(QSP_CHAR), fileLen, f);
+	fclose(f);
+	buf[fileLen] = 0;
+	qspOpenGameStatusFromString(buf);
+	free(buf);
 }
 
 void qspOpenGameStatus(QSP_CHAR *fileName)

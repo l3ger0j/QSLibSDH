@@ -19,9 +19,14 @@
 
 #ifdef _JVM_BINDING
 
+#ifdef _WIN32
+	#include <io.h>
+#else
+	#include <unistd.h>
+#endif
+
 #include "../../actions.h"
 #include "../../callbacks.h"
-#include "../../coding.h"
 #include "../../common.h"
 #include "../../errors.h"
 #include "../../game.h"
@@ -33,7 +38,6 @@
 #include "../../text.h"
 #include "../../time.h"
 #include "../../variables.h"
-#include "../../variant.h"
 
 JavaVM *ndkJvm;
 jclass ndkApiClass;
@@ -508,32 +512,127 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env
 /* ------------------------------------------------------------ */
 /* Game Management */
 
-/* Working with memory */
+/* Working with FileDescriptor */
 
-/* Loading a new game from memory */
-QSP_BOOL QSPLoadGameWorldFromData(void *data, int dataSize, QSP_CHAR *fileName)
+/* Loading a new game from FileDescriptor */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jobject fileDescriptor, jstring fileName)
 {
-	char *ptr;
+	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
+	#ifdef _WIN32
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
+	#else
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
+	#endif
+	if (fdField == NULL) return QSP_FALSE;
+	const jint fd = (*env)->GetIntField(env, fileDescriptor, fdField);
+
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspResetError();
+
 	if (qspIsDisableCodeExec) return QSP_FALSE;
-	ptr = (char *)malloc(dataSize + 3);
-	memcpy(ptr, data, dataSize);
-	ptr[dataSize] = ptr[dataSize + 1] = ptr[dataSize + 2] = 0;
-	qspOpenQuestFromData(ptr, dataSize + 3, fileName, QSP_FALSE);
-	free(ptr);
+
+	const int nfd = dup(fd);
+	if (nfd < 0) return QSP_FALSE;
+
+	QSP_CHAR* name = ndkFromJavaString(env, fileName);
+	qspOpenQuestFromFD(nfd, name, QSP_FALSE);
+	free(name);
+	close(nfd);
+
 	if (qspErrorNum) return QSP_FALSE;
+
 	return QSP_TRUE;
 }
 
+/* Saving state by FileDescriptor */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *env, jobject this, jobject fileDescriptor, jboolean isRefresh)
+{
+	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
+	#ifdef _WIN32
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
+	#else
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
+	#endif
+	if (fdField == NULL) return QSP_FALSE;
+	const jint fd = (*env)->GetIntField(env, fileDescriptor, fdField);
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	const int nfd = dup(fd);
+	if (nfd < 0) return QSP_FALSE;
+
+	qspSaveGameStatusByFD(nfd);
+
+	close(nfd);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
+}
+
+
+/* Loading state from FileDescriptor */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JNIEnv *env, jobject this, jobject fileDescriptor, jboolean isRefresh)
+{
+	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
+	#ifdef _WIN32
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
+	#else
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
+	#endif
+	if (fdField == NULL) return QSP_FALSE;
+	const jint fd = (*env)->GetIntField(env, fileDescriptor, fdField);
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	const int nfd = dup(fd);
+	if (nfd < 0) return QSP_FALSE;
+
+	qspOpenGameStatusFromFD(nfd);
+
+	close(nfd);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
+}
+
+/* Working with memory */
+
+/* Loading a new game from memory */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName)
 {
 	/* We don't execute any game code here */
-	jint datSize = (*env)->GetArrayLength(env, data);
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspResetError();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	const jint dataSize = (*env)->GetArrayLength(env, data);
+	char *ptr = malloc(dataSize + 3);
 	jbyte *arrayData = (*env)->GetByteArrayElements(env, data, 0);
-	QSP_BOOL res = QSPLoadGameWorldFromData((char *)arrayData, datSize, fileName);
+	memcpy(ptr, (char *)arrayData, dataSize);
 	(*env)->ReleaseByteArrayElements(env, data, arrayData, JNI_ABORT);
-	return res;
+
+	ptr[dataSize] = ptr[dataSize + 1] = ptr[dataSize + 2] = 0;
+
+	QSP_CHAR* name = ndkFromJavaString(env, fileName);
+	qspOpenQuestFromData(ptr, dataSize + 3, name, QSP_FALSE);
+
+	free(name);
+	free(ptr);
+
+	if (qspErrorNum) return QSP_FALSE;
+
+	return QSP_TRUE;
 }
 
 /* Saving state to memory */
@@ -565,15 +664,14 @@ QSP_BOOL QSPSaveGameAsData(void **buf, int *realSize, QSP_BOOL isRefresh)
 	return QSP_TRUE;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameAsData__Z(JNIEnv *env, jobject this, jboolean isRefresh)
+JNIEXPORT jbyteArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameAsData(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	void *buffer = NULL;
 	int bufferSize = 0;
-	if (QSPSaveGameAsData(&buffer, &bufferSize, (QSP_BOOL)isRefresh) == QSP_FALSE)
+	if (QSPSaveGameAsData(&buffer, &bufferSize, isRefresh) == QSP_FALSE)
 		return NULL;
 
-	jbyteArray result;
-	result = (*env)->NewByteArray(env, bufferSize);
+	const jbyteArray result = (*env)->NewByteArray(env, bufferSize);
 	if (result == NULL)
 		return NULL;
 
@@ -583,46 +681,28 @@ JNIEXPORT jbyteArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameAsData__Z(JN
 }
 
 /* Loading state from memory */
-QSP_BOOL QSPOpenSavedGameFromData(const void *data, int dataSize, QSP_BOOL isRefresh)
-{
-	int dataLen;
-	QSP_CHAR *ptr;
-	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
-	qspPrepareExecution();
-	if (qspIsDisableCodeExec) return QSP_FALSE;
-	dataLen = dataSize / sizeof(QSP_CHAR);
-	ptr = (QSP_CHAR *)malloc((dataLen + 1) * sizeof(QSP_CHAR));
-	memcpy(ptr, data, dataSize);
-	ptr[dataLen] = 0;
-	qspOpenGameStatusFromString(ptr);
-	free(ptr);
-	if (qspErrorNum) return QSP_FALSE;
-	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
-	return QSP_TRUE;
-}
-
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromData(JNIEnv *env, jobject this, jbyteArray data, jboolean isRefresh)
 {
-	QSP_BOOL res;
-	jint dataSize;
-	jbyte *arrayData;
-	dataSize = (*env)->GetArrayLength(env, data);
-	arrayData = (*env)->GetByteArrayElements(env, data, 0);
-	res = QSPOpenSavedGameFromData(arrayData, dataSize, (QSP_BOOL)isRefresh) == QSP_TRUE;
-	(*env)->ReleaseByteArrayElements(env, data, arrayData, JNI_ABORT);
-	if (!res) return JNI_FALSE;
-	return JNI_TRUE;
-}
-
-/* Loading the state from memory via a string */
-QSP_BOOL QSPOpenSavedGameFromString(const QSP_CHAR* str, QSP_BOOL isRefresh)
-{
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
+
 	if (qspIsDisableCodeExec) return QSP_FALSE;
-	qspOpenGameStatusFromString((QSP_CHAR*)str);
+
+	const jint dataSize = (*env)->GetArrayLength(env, data);
+	const int dataLen = dataSize / sizeof(QSP_CHAR);
+	QSP_CHAR *ptr = malloc(dataLen * sizeof(QSP_CHAR));
+	jbyte *arrayData = (*env)->GetByteArrayElements(env, data, 0);
+	memcpy(ptr, arrayData, dataLen);
+	(*env)->ReleaseByteArrayElements(env, data, arrayData, JNI_ABORT);
+	ptr[dataLen] = 0;
+
+	qspOpenGameStatusFromString(ptr);
+
+	free(ptr);
+
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
 	return QSP_TRUE;
 }
 
@@ -637,13 +717,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_restartGame(JNIEnv *en
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
 	return JNI_TRUE;
 }
-/* ------------------------------------------------------------ */
-/* Installing CALLBACKS */
-//void QSPSetCallBack(int type, QSP_CALLBACK func)
-//{
-//	qspSetCallBack(type, func);
-//}
-/* ------------------------------------------------------------ */
+
 /* Initialization */
 JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject this)
 {
