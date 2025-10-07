@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(qslibsdh VERSION 5.7.0)
 
-set(QSP_GAMEMIN_VER "5.7.0")
+set(QSLIBSDH_GAMEMIN_VER "5.7.0")
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
@@ -79,7 +79,7 @@ else()
 	add_library(oniguruma::onig ALIAS onig)
 endif()
 
-configure_file(qsp_config.h.cmakein qsp_config.h @ONLY)
+configure_file(qslibsdh_config.h.cmakein qslibsdh_config.h @ONLY)
 
 set(QSLIBSDH_SOURCES
 		src/bindings/bindings_config.h
@@ -138,13 +138,13 @@ target_include_directories(qslibsdh
 )
 
 generate_export_header(qslibsdh
-		BASE_NAME Qsp
-		EXPORT_MACRO_NAME QSP_EXTERN
+		BASE_NAME QSLibSDH
+		EXPORT_MACRO_NAME QSLIBSDH_EXTERN
 )
 
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/cmake/Qsp/QspConfigVersion.cmake COMPATIBILITY AnyNewerVersion)
-configure_package_config_file(QspConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/Qsp/QspConfig.cmake
-		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp"
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/cmake/QSLibSDH/QSLibSDHConfigVersion.cmake COMPATIBILITY AnyNewerVersion)
+configure_package_config_file(QSLibSDHConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/QSLibSDH/QSLibSDHConfig.cmake
+		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QSLibSDH"
 )
 
 set(QSLIBSDH_INSTALL_TARGETS qslibsdh)
@@ -156,11 +156,11 @@ if (TARGET onig)
 	endif()
 endif()
 
-export(TARGETS ${QSLIBSDH_INSTALL_TARGETS} NAMESPACE Qsp:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QspTargets.cmake)
+export(TARGETS ${QSLIBSDH_INSTALL_TARGETS} NAMESPACE QSLibSDH:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QSLibSDHTargets.cmake)
 
-install(TARGETS ${QSLIBSDH_INSTALL_TARGETS} EXPORT QspTargets)
+install(TARGETS ${QSLIBSDH_INSTALL_TARGETS} EXPORT QSLibSDHTargets)
 
-install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp")
+install(EXPORT QSLibSDHTargets FILE QSLibSDHTargets.cmake NAMESPACE QSLibSDH:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QSLibSDH")
 
 install(
 		DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cmake
