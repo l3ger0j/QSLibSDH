@@ -178,7 +178,7 @@ JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getActionsCount(JNIEnv *en
 }
 
 /* Data actions with the specified index */
-JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getActionData(JNIEnv *env, jobject this)
+JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getActions(JNIEnv *env, jobject this)
 {
 	int i;
 	JNIListItem item;
@@ -243,7 +243,7 @@ JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getObjectsCount(JNIEnv *en
 }
 
 /* Object data with the specified index */
-JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getObjectData(JNIEnv *env, jobject this)
+JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getObjects(JNIEnv *env, jobject this)
 {
 	int i;
 	JNIListItem item;
