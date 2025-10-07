@@ -15,10 +15,10 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include <jni.h>
-
 #ifndef QSP_JVMDEFINES
 	#define QSP_JVMDEFINES
+
+	#include <jni.h>
 
 	#ifdef _UNICODE
 		#ifdef _WIN32
@@ -51,7 +51,7 @@
 			#define QSP_FDOPEN qspFileDescOpen
 		#endif
 	#else
-		#error "Non-Unicode build using Android binding is not supported"
+		#error "Non-Unicode build using JVM binding is not supported"
 	#endif
 
 	#ifdef _MSC_VER
