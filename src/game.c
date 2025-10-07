@@ -308,7 +308,7 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 		qspQstCRC = crc;
 		qspCurLoc = -1;
 
-		#ifdef _ANDROID
+		#ifdef ANDROID
 			// Notify application on quest path change
 			qspCallChangeQuestPath(qspQstPath);
 		#endif
@@ -338,7 +338,7 @@ void qspOpenQuestFromFD(int fd, QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 
 void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 {
-	#ifdef _ANDROID
+	#ifdef ANDROID
 		int fileSize;
 
 		char * data = qspCallGetFileContents(fileName, &fileSize);
