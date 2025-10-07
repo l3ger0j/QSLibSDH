@@ -23,7 +23,6 @@
 
 #include <jni.h>
 #include <string.h>
-#include <android/log.h>
 
 static int qspUTF8_mbtowc(int *pwc, unsigned char *s, int n)
 {
