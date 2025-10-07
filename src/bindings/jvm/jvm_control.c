@@ -518,7 +518,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jobject fileDescriptor, jstring fileName)
 {
 	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
-	#ifdef _WIN32
+	#ifndef _WIN32
 		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
 	#else
 		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
@@ -548,7 +548,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *env, jobject this, jobject fileDescriptor, jboolean isRefresh)
 {
 	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
-	#ifdef _WIN32
+	#ifndef _WIN32
 		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
 	#else
 		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
@@ -579,7 +579,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *e
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JNIEnv *env, jobject this, jobject fileDescriptor, jboolean isRefresh)
 {
 	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
-	#ifdef _WIN32
+	#ifndef _WIN32
 		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
 	#else
 		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
