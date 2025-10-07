@@ -692,7 +692,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject 
 	ndkVarValResp = (jclass)(*env)->NewGlobalRef(env, clazz);
 
 	/* Get references to callbacks */
-	qspSetCallBack(QSP_CALL_DEBUG, (*env)->GetMethodID(env, ndkApiClass, "callDebug", "(Ljava/lang/String;)V"));
+	qspSetCallBack(QSP_CALL_DEBUG, (*env)->GetMethodID(env, ndkApiClass, "onCallDebug", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_ISPLAYINGFILE, (*env)->GetMethodID(env, ndkApiClass, "onIsPlayingFile", "(Ljava/lang/String;)Z"));
 	qspSetCallBack(QSP_CALL_PLAYFILE, (*env)->GetMethodID(env, ndkApiClass, "onPlayFile", "(Ljava/lang/String;I)V"));
 	qspSetCallBack(QSP_CALL_CLOSEFILE, (*env)->GetMethodID(env, ndkApiClass, "onCloseFile", "(Ljava/lang/String;)V"));
