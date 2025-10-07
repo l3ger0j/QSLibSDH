@@ -170,7 +170,7 @@ install(
 install(FILES
 		src/bindings/qsp.h
 		src/bindings/bindings_config.h
-		"${CMAKE_CURRENT_BINARY_DIR}/qsp_export.h"
+		"${CMAKE_CURRENT_BINARY_DIR}/qslibsdh_export.h"
 		DESTINATION
 		"${CMAKE_INSTALL_INCLUDEDIR}/src"
 )
