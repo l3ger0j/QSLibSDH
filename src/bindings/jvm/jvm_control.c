@@ -60,13 +60,11 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_enableDebugMode(JNIEnv *en
 /* Getting current state data */
 JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getCurStateData(JNIEnv *env, jobject this)
 {
-	jfieldID fieldId;
-	QSP_CHAR *locName;
 	jobject jniExecutionState = (*env)->AllocObject(env, ndkExecutionStateClass);
 
-	locName = ((qspRealCurLoc >= 0 && qspRealCurLoc < qspLocsCount) ? qspLocs[qspRealCurLoc].Name : 0);
+	QSP_CHAR *locName = ((qspRealCurLoc >= 0 && qspRealCurLoc < qspLocsCount) ? qspLocs[qspRealCurLoc].Name : 0);
 
-	fieldId = (*env)->GetFieldID(env, ndkExecutionStateClass , "loc", "Ljava/lang/String;");
+	jfieldID fieldId = (*env)->GetFieldID(env, ndkExecutionStateClass, "loc", "Ljava/lang/String;");
 	(*env)->SetObjectField(env, jniExecutionState, fieldId, ndkToJavaString(env, locName));
 
 	fieldId = (*env)->GetFieldID(env, ndkExecutionStateClass , "actIndex", "I");
@@ -517,27 +515,17 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env
 /* Loading a new game from FileDescriptor */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jobject fileDescriptor, jstring fileName)
 {
-	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
-	#ifndef _WIN32
-		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
-	#else
-		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
-	#endif
-	if (fdField == NULL) return QSP_FALSE;
-	const jint fd = (*env)->GetIntField(env, fileDescriptor, fdField);
+	const jint fd = ndkConvFileDesc(env, fileDescriptor);
+	if (fd < 0) return JNI_ERR;
 
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspResetError();
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	const int nfd = dup(fd);
-	if (nfd < 0) return QSP_FALSE;
-
 	QSP_CHAR* name = ndkFromJavaString(env, fileName);
-	qspOpenQuestFromFD(nfd, name, QSP_FALSE);
+	qspOpenQuestFromFD(fd, name, QSP_FALSE);
 	free(name);
-	close(nfd);
 
 	if (qspErrorNum) return QSP_FALSE;
 
@@ -547,26 +535,15 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 /* Saving state by FileDescriptor */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *env, jobject this, jobject fileDescriptor, jboolean isRefresh)
 {
-	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
-	#ifndef _WIN32
-		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
-	#else
-		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
-	#endif
-	if (fdField == NULL) return QSP_FALSE;
-	const jint fd = (*env)->GetIntField(env, fileDescriptor, fdField);
+	const jint fd = ndkConvFileDesc(env, fileDescriptor);
+	if (fd < 0) return JNI_ERR;
 
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	const int nfd = dup(fd);
-	if (nfd < 0) return QSP_FALSE;
-
-	qspSaveGameStatusByFD(nfd);
-
-	close(nfd);
+	qspSaveGameStatusByFD(fd);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
@@ -578,26 +555,15 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *e
 /* Loading state from FileDescriptor */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JNIEnv *env, jobject this, jobject fileDescriptor, jboolean isRefresh)
 {
-	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
-	#ifndef _WIN32
-		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
-	#else
-		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
-	#endif
-	if (fdField == NULL) return QSP_FALSE;
-	const jint fd = (*env)->GetIntField(env, fileDescriptor, fdField);
+	const jint fd = ndkConvFileDesc(env, fileDescriptor);
+	if (fd < 0) return JNI_ERR;
 
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	const int nfd = dup(fd);
-	if (nfd < 0) return QSP_FALSE;
-
-	qspOpenGameStatusFromFD(nfd);
-
-	close(nfd);
+	qspOpenGameStatusFromFD(fd);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
@@ -784,7 +750,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject 
 	qspSetCallBack(QSP_CALL_GETMSCOUNT, (*env)->GetMethodID(env, ndkApiClass, "onGetMsCount", "()I"));
 	qspSetCallBack(QSP_CALL_INPUTBOX, (*env)->GetMethodID(env, ndkApiClass, "onInputBox", "(Ljava/lang/String;)Ljava/lang/String;"));
 	qspSetCallBack(QSP_CALL_ADDMENUITEM, (*env)->GetMethodID(env, ndkApiClass, "onAddMenuItem", "(Ljava/lang/String;Ljava/lang/String;)V"));
-	qspSetCallBack(QSP_CALL_GETFILECONTENT, (*env)->GetMethodID(env, ndkApiClass, "onGetFileContents", "(Ljava/lang/String;)[B"));
+	qspSetCallBack(QSP_CALL_GETFILEDESC, (*env)->GetMethodID(env, ndkApiClass, "onGetFileDescription", "(Ljava/lang/String;)Ljava/io/FileDescriptor;"));
 	qspSetCallBack(QSP_CALL_CHANGEQUESTPATH, (*env)->GetMethodID(env, ndkApiClass, "onOpenGame", "(Ljava/lang/String;)V"));
 }
 

@@ -94,8 +94,7 @@ INLINE int qspCRC(void *data, int len)
 
 QSP_CHAR *qspGetAbsFromRelPath(QSP_CHAR *path)
 {
-	QSP_CHAR *absPath;
-	absPath = qspGetNewText(qspQstPath, qspQstPathLen);
+	QSP_CHAR *absPath = qspGetNewText(qspQstPath, qspQstPathLen);
 	return qspGetAddText(absPath, path, qspQstPathLen, -1);
 }
 
@@ -325,7 +324,7 @@ void qspOpenQuestFromFD(int fd, QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 	}
 
 	fseek(f, 0, SEEK_END);
-	int fileSize = ftell(f);
+	const int fileSize = ftell(f);
 	char *buf = malloc(fileSize + 3);
 	fseek(f, 0, SEEK_SET);
 	fread(buf, 1, fileSize, f);
@@ -339,33 +338,37 @@ void qspOpenQuestFromFD(int fd, QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 {
 	#ifdef ANDROID
-		int fileSize;
-
-		char * data = qspCallGetFileContents(fileName, &fileSize);
-		if (!data) {
+		const int desc = qspCallGetFileDesc(fileName);
+		if (!desc) {
 			qspSetError(QSP_ERR_FILENOTFOUND);
 			return;
 		}
 
-		char * buf = (char *)malloc(fileSize + 3);
-		memcpy(buf, data, fileSize);
-		free(data);
-
+		FILE * f;
+		if (!(f = QSP_FDOPEN(desc, QSP_FMT("rb"))))
+		{
+			qspSetError(QSP_ERR_FILENOTFOUND);
+			return;
+		}
+		fseek(f, 0, SEEK_END);
+		const int fileSize = ftell(f);
+		char *buf = malloc(fileSize + 3);
+		fseek(f, 0, SEEK_SET);
+		fread(buf, 1, fileSize, f);
+		fclose(f);
 		buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
-		qspOpenQuestFromData(buf, fileSize, fileName, isAddLocs);
+		qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
 		free(buf);
 	#else
 		FILE * f;
-		char * buf;
-		int fileSize;
 		if (!(f = QSP_FOPEN(fileName, QSP_FMT("rb"))))
 		{
 			qspSetError(QSP_ERR_FILENOTFOUND);
 			return;
 		}
 		fseek(f, 0, SEEK_END);
-		fileSize = ftell(f);
-		buf = (char *)malloc(fileSize + 3);
+		const int fileSize = ftell(f);
+		char *buf = malloc(fileSize + 3);
 		fseek(f, 0, SEEK_SET);
 		fread(buf, 1, fileSize, f);
 		fclose(f);

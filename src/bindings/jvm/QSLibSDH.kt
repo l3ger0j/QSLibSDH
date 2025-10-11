@@ -116,5 +116,5 @@ abstract class QSLibSDH {
     open fun onShowMenuNew(): Int = -1
     open fun onDeleteMenu() {}
 
-    open fun onGetFileContents(path: String?): ByteArray? = null
+    open fun onGetFileDesc(path: String?): FileDescriptor = FileDescriptor()
 }

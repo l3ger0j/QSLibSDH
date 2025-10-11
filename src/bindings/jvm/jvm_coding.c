@@ -206,4 +206,15 @@ void ndkReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem)
 	(*env)->DeleteLocalRef(env, listItem->Name);
 }
 
+int ndkConvFileDesc(JNIEnv *env, jobject fileDescriptor) {
+	const jclass fdClass = (*env)->GetObjectClass(env, fileDescriptor);
+	#ifdef ANDROID
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "descriptor", "I");
+	#else
+		jfieldID fdField = (*env)->GetFieldID(env, fdClass, "fd", "I");
+	#endif
+	if (fdField == NULL) return -1;
+	return (*env)->GetIntField(env, fileDescriptor, fdField);
+}
+
 #endif

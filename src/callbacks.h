@@ -60,7 +60,7 @@
 	void qspCallCloseFile(QSP_CHAR *);
 	void qspCallDeleteMenu();
 	QSP_CHAR *qspCallInputBox(QSP_CHAR *);
-	char *qspCallGetFileContents(QSP_CHAR *, int *);
+	int qspCallGetFileDesc(QSP_CHAR *);
 	void qspCallChangeQuestPath(QSP_CHAR *);
 
 #endif

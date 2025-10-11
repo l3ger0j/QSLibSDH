@@ -338,38 +338,27 @@ QSP_CHAR* qspCallInputBox(QSP_CHAR* text)
 	return qspGetNewText(QSP_FMT(""), 0);
 }
 
-char* qspCallGetFileContents(QSP_CHAR* fileName, int* filesize)
+int qspCallGetFileDesc(QSP_CHAR* fileName)
 {
-	if (fileName == NULL) return (char*)qspGetNewText(QSP_FMT(""), 0);
-	if (qspCallBacks[QSP_CALL_GETFILECONTENT]) {
+	if (fileName == NULL) return -1;
+	if (qspCallBacks[QSP_CALL_GETFILEDESC]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
+
 		// Convert QSP file name to Java
 		jstring javaFileName = ndkToJavaString(javaEnv, fileName);
 
 		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
-		// Call GetFileContents
-		jbyteArray byteArray = (jbyteArray)(*javaEnv)->CallObjectMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_GETFILECONTENT], javaFileName);
+		// Call GetFileDesc
+		jobject fileDesc = (*javaEnv)->CallObjectMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_GETFILEDESC], javaFileName);
 		(*javaEnv)->DeleteLocalRef(javaEnv, javaFileName);
-		if (!byteArray) return NULL;
+		if (!fileDesc) return -1;
 
-		// Copy file contents into a new buffer
-		jboolean isCopy;
-		jbyte* data = (*javaEnv)->GetByteArrayElements(javaEnv, byteArray, &isCopy);
-		jsize byteArrayLen = (*javaEnv)->GetArrayLength(javaEnv, byteArray);
-		char* result = (char*)malloc(byteArrayLen);
-		memcpy(result, data, byteArrayLen);
-		(*javaEnv)->ReleaseByteArrayElements(javaEnv, byteArray, data, JNI_ABORT);
-
-		// Set file size
-		if (filesize)
-		{
-			*filesize = byteArrayLen;
-		}
+		const int fd = ndkConvFileDesc(javaEnv, fileDesc);
 		qspRestoreCallState(&state);
-		return result;
+		return fd;
 	}
-	return (char*)qspGetNewText(QSP_FMT(""), 0);
+	return -1;
 }
 
 void qspCallChangeQuestPath(QSP_CHAR* path)
