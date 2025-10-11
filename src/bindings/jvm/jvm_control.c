@@ -750,7 +750,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject 
 	qspSetCallBack(QSP_CALL_GETMSCOUNT, (*env)->GetMethodID(env, ndkApiClass, "onGetMsCount", "()I"));
 	qspSetCallBack(QSP_CALL_INPUTBOX, (*env)->GetMethodID(env, ndkApiClass, "onInputBox", "(Ljava/lang/String;)Ljava/lang/String;"));
 	qspSetCallBack(QSP_CALL_ADDMENUITEM, (*env)->GetMethodID(env, ndkApiClass, "onAddMenuItem", "(Ljava/lang/String;Ljava/lang/String;)V"));
-	qspSetCallBack(QSP_CALL_GETFILEDESC, (*env)->GetMethodID(env, ndkApiClass, "onGetFileDescription", "(Ljava/lang/String;)Ljava/io/FileDescriptor;"));
+	qspSetCallBack(QSP_CALL_GETFILEDESC, (*env)->GetMethodID(env, ndkApiClass, "onGetFileDesc", "(Ljava/lang/String;)Ljava/io/FileDescriptor;"));
 	qspSetCallBack(QSP_CALL_CHANGEQUESTPATH, (*env)->GetMethodID(env, ndkApiClass, "onOpenGame", "(Ljava/lang/String;)V"));
 }
 
