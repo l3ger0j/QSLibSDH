@@ -87,5 +87,6 @@
 	QSP_CHAR *ndkFromJavaString(JNIEnv *env, jstring str);
 	JNIListItem ndkToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *name);
 	void ndkReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem);
+	int ndkConvFileDesc(JNIEnv *env, jobject fileDescriptor);
 
 #endif
