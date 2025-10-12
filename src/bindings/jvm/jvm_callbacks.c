@@ -346,17 +346,16 @@ int qspCallGetFileDesc(QSP_CHAR* fileName)
 		JNIEnv *javaEnv = ndkGetJniEnv();
 
 		// Convert QSP file name to Java
-		jstring javaFileName = ndkToJavaString(javaEnv, fileName);
+		const jstring javaFileName = ndkToJavaString(javaEnv, fileName);
 
 		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
 		// Call GetFileDesc
-		jobject fileDesc = (*javaEnv)->CallObjectMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_GETFILEDESC], javaFileName);
+		const jint fileDesc = (*javaEnv)->CallIntMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_GETFILEDESC], javaFileName);
 		(*javaEnv)->DeleteLocalRef(javaEnv, javaFileName);
 		if (!fileDesc) return -1;
 
-		const int fd = ndkConvFileDesc(javaEnv, fileDesc);
 		qspRestoreCallState(&state);
-		return fd;
+		return fileDesc;
 	}
 	return -1;
 }

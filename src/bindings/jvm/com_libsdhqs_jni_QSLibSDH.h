@@ -291,10 +291,10 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
  * Method:    loadGameWorldFromFD
- * Signature: (Ljava/io/FileDescriptor;Ljava/lang/String;)Z
+ * Signature: (ILjava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD
-  (JNIEnv *, jobject, jobject, jstring);
+  (JNIEnv *, jobject, jint, jstring);
 
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
@@ -307,10 +307,10 @@ JNIEXPORT jbyteArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameAsData
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
  * Method:    saveGameByFD
- * Signature: (Ljava/io/FileDescriptor;Z)Z
+ * Signature: (IZ)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD
-  (JNIEnv *, jobject, jobject, jboolean);
+  (JNIEnv *, jobject, jint, jboolean);
 
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
@@ -323,10 +323,10 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromData
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
  * Method:    openSavedGameFromFD
- * Signature: (Ljava/io/FileDescriptor;Z)Z
+ * Signature: (IZ)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD
-  (JNIEnv *, jobject, jobject, jboolean);
+  (JNIEnv *, jobject, jint, jboolean);
 
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
