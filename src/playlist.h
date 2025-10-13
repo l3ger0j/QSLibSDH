@@ -15,14 +15,11 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
+#include "declarations.h"
+#include "variant.h"
+
 #ifndef QSP_PLAYLISTDEFINES
 	#define QSP_PLAYLISTDEFINES
-
-	#include "declarations.h"
-	#include "variant.h"
-	#include "callbacks.h"
-	#include "game.h"
-	#include "text.h"
 
 	#define QSP_PLVOLUMEDELIM QSP_FMT("*")
 	#define QSP_MAXPLFILES 500

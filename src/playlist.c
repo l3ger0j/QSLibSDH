@@ -16,6 +16,9 @@
 */
 
 #include "playlist.h"
+#include "callbacks.h"
+#include "game.h"
+#include "text.h"
 
 QSP_CHAR *qspPLFiles[QSP_MAXPLFILES];
 int qspPLFilesCount = 0;

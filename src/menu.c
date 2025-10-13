@@ -16,6 +16,11 @@
 */
 
 #include "menu.h"
+#include "callbacks.h"
+#include "errors.h"
+#include "game.h"
+#include "text.h"
+#include "variables.h"
 
 QSP_CHAR *qspCurMenuLocs[QSP_MAXMENUITEMS];
 int qspCurMenuItems = 0;

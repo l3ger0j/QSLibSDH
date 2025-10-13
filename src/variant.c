@@ -16,6 +16,8 @@
 */
 
 #include "variant.h"
+#include "coding.h"
+#include "text.h"
 
 void qspFreeVariants(QSPVariant *args, int count)
 {

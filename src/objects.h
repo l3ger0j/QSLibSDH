@@ -15,16 +15,11 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
+#include "declarations.h"
+#include "variant.h"
+
 #ifndef QSP_OBJSDEFINES
 	#define QSP_OBJSDEFINES
-
-	#include "declarations.h"
-	#include "variant.h"
-	#include "errors.h"
-	#include "game.h"
-	#include "locations.h"
-	#include "text.h"
-	#include "variables.h"
 
 	#define QSP_MAXOBJECTS 1000
 

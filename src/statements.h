@@ -15,24 +15,12 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
+#include "declarations.h"
+#include "codetools.h"
+#include "variant.h"
+
 #ifndef QSP_STATSDEFINES
 	#define QSP_STATSDEFINES
-
-	#include "declarations.h"
-	#include "codetools.h"
-	#include "variant.h"
-	#include "actions.h"
-	#include "callbacks.h"
-	#include "common.h"
-	#include "errors.h"
-	#include "game.h"
-	#include "locations.h"
-	#include "mathops.h"
-	#include "menu.h"
-	#include "objects.h"
-	#include "playlist.h"
-	#include "text.h"
-	#include "variables.h"
 
 	#define QSP_STATSLEVELS 3
 	#define QSP_MAXSTATSNAMES 100

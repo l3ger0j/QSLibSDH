@@ -15,12 +15,13 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
+#include "declarations.h"
+#include "variant.h"
+
+#include "qslibsdh_config.h"
+
 #ifndef QSP_GAMEDEFINES
 	#define QSP_GAMEDEFINES
-
-	#include "declarations.h"
-	#include "variant.h"
-	#include "qslibsdh_config.h"
 
 	#define QSP_GAMEID QSP_FMT("QSPGAME")
 	#define QSP_SAVEDGAMEID QSP_FMT("QSPSAVEDGAME")
