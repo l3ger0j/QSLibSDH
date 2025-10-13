@@ -78,7 +78,6 @@ int qspCRCTable[256] =
 INLINE int qspCRC(void *, int);
 INLINE void qspOpenIncludes();
 INLINE FILE *qspFileOpen(QSP_CHAR *, QSP_CHAR *);
-INLINE FILE *qspFileDescOpen(int, QSP_CHAR *);
 INLINE QSP_BOOL qspCheckQuest(char **, int, QSP_BOOL);
 INLINE QSP_BOOL qspCheckGameStatus(QSP_CHAR **, int);
 
@@ -164,16 +163,6 @@ INLINE FILE *qspFileOpen(QSP_CHAR *fileName, QSP_CHAR *fileMode)
 	mode = qspFromQSPString(fileMode);
 	ret = fopen(file, mode);
 	free(file);
-	free(mode);
-	return ret;
-}
-
-INLINE FILE *qspFileDescOpen(int fd, QSP_CHAR *fileMode)
-{
-	FILE *ret;
-	char *mode;
-	mode = qspFromQSPString(fileMode);
-	ret = fdopen(fd, mode);
 	free(mode);
 	return ret;
 }
@@ -314,10 +303,10 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 	}
 }
 
-void qspOpenQuestFromFD(int fd, QSP_CHAR *fileName, QSP_BOOL isAddLocs)
+void qspOpenQuestFromFD(const int fd, QSP_CHAR *fileName, const QSP_BOOL isAddLocs)
 {
-	FILE * f;
-	if (!((f = QSP_FDOPEN(fd, QSP_FMT("rb")))))
+	FILE *f = QSP_FDOPEN(fd, "rb");
+	if (f == NULL)
 	{
 		qspSetError(QSP_ERR_FILENOTFOUND);
 		return;
@@ -329,6 +318,7 @@ void qspOpenQuestFromFD(int fd, QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 	fseek(f, 0, SEEK_SET);
 	fread(buf, 1, fileSize, f);
 	fclose(f);
+	close(fd);
 	buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
 	qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
 
@@ -344,8 +334,8 @@ void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 			return;
 		}
 
-		FILE * f;
-		if (!(f = QSP_FDOPEN(desc, QSP_FMT("rb"))))
+		FILE *f = QSP_FDOPEN(desc, "rb");
+		if (f == NULL)
 		{
 			qspSetError(QSP_ERR_FILENOTFOUND);
 			return;
@@ -356,6 +346,7 @@ void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 		fseek(f, 0, SEEK_SET);
 		fread(buf, 1, fileSize, f);
 		fclose(f);
+		close(desc);
 		buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
 		qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
 		free(buf);
@@ -460,20 +451,22 @@ int qspSaveGameStatusToString(QSP_CHAR **buf)
 
 void qspSaveGameStatusByFD(const int fd)
 {
-	FILE *f;
-	int len;
-	QSP_CHAR *buf;
-	if (!((f = QSP_FDOPEN(fd, QSP_FMT("wb")))))
+	FILE *f = QSP_FDOPEN(fd, "wb");
+	if (f == NULL)
 	{
 		qspSetError(QSP_ERR_FILENOTFOUND);
 		return;
 	}
+
+	int len;
+	QSP_CHAR *buf;
 	if ((len = qspSaveGameStatusToString(&buf)))
 	{
 		fwrite(buf, sizeof(QSP_CHAR), len, f);
 		free(buf);
 	}
 	fclose(f);
+	close(fd);
 }
 
 void qspSaveGameStatus(QSP_CHAR *fileName)
@@ -692,7 +685,7 @@ void qspOpenGameStatusFromString(QSP_CHAR *str)
 void qspOpenGameStatusFromFD(const int fd)
 {
 	FILE *f;
-	if (!((f = QSP_FDOPEN(fd, QSP_FMT("rb")))))
+	if (!((f = QSP_FDOPEN(fd, "rb"))))
 	{
 		qspSetError(QSP_ERR_FILENOTFOUND);
 		return;
@@ -703,6 +696,7 @@ void qspOpenGameStatusFromFD(const int fd)
 	fseek(f, 0, SEEK_SET);
 	fread(buf, sizeof(QSP_CHAR), fileLen, f);
 	fclose(f);
+	close(fd);
 	buf[fileLen] = 0;
 	qspOpenGameStatusFromString(buf);
 	free(buf);

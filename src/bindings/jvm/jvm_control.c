@@ -19,12 +19,6 @@
 
 #ifdef _JVM_BINDING
 
-#ifdef _WIN32
-	#include <io.h>
-#else
-	#include <unistd.h>
-#endif
-
 #include "../../actions.h"
 #include "../../callbacks.h"
 #include "../../common.h"
@@ -525,7 +519,6 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 	QSP_CHAR* name = ndkFromJavaString(env, fileName);
 	qspOpenQuestFromFD(fileDescriptor, name, QSP_FALSE);
 	free(name);
-	close(fileDescriptor);
 
 	if (qspErrorNum) return QSP_FALSE;
 
@@ -543,7 +536,6 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *e
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
 	qspSaveGameStatusByFD(fileDescriptor);
-	close(fileDescriptor);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
@@ -563,7 +555,6 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JN
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
 	qspOpenGameStatusFromFD(fileDescriptor);
-	close(fileDescriptor);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);

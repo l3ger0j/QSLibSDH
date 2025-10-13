@@ -45,11 +45,11 @@
 
 		#ifdef _MSC_VER
 			#define QSP_FOPEN _wfopen
-			#define QSP_FDOPEN _wfdopen
 		#else
 			#define QSP_FOPEN qspFileOpen
-			#define QSP_FDOPEN qspFileDescOpen
 		#endif
+
+		#define QSP_FDOPEN fdopen
 	#else
 		#error "Non-Unicode build using JVM binding is not supported"
 	#endif
