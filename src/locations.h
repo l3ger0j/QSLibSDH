@@ -15,13 +15,13 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include "declarations.h"
-#include "actions.h"
-#include "codetools.h"
-#include "variant.h"
-
 #ifndef QSP_LOCSDEFINES
 	#define QSP_LOCSDEFINES
+
+	#include "declarations.h"
+	#include "actions.h"
+	#include "codetools.h"
+	#include "variant.h"
 
 	typedef struct
 	{
@@ -30,6 +30,7 @@
 		QSPLineOfCode *OnPressLines;
 		int OnPressLinesCount;
 	} QSPLocAct;
+
 	typedef struct
 	{
 		QSP_CHAR *Name;
@@ -38,6 +39,7 @@
 		int OnVisitLinesCount;
 		QSPLocAct Actions[QSP_MAXACTIONS];
 	} QSPLocation;
+
 	typedef struct
 	{
 		int Index;

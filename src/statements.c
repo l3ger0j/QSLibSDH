@@ -16,18 +16,6 @@
 */
 
 #include "statements.h"
-#include "actions.h"
-#include "callbacks.h"
-#include "common.h"
-#include "errors.h"
-#include "game.h"
-#include "locations.h"
-#include "mathops.h"
-#include "menu.h"
-#include "objects.h"
-#include "playlist.h"
-#include "text.h"
-#include "variables.h"
 
 QSPStatement qspStats[qspStatLast_Statement];
 QSPStatName qspStatsNames[QSP_STATSLEVELS][QSP_MAXSTATSNAMES];

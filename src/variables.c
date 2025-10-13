@@ -16,11 +16,6 @@
 */
 
 #include "variables.h"
-#include "coding.h"
-#include "errors.h"
-#include "locations.h"
-#include "mathops.h"
-#include "text.h"
 
 QSPVar qspVars[QSP_VARSCOUNT];
 

@@ -16,7 +16,6 @@
 */
 
 #include "time.h"
-#include "callbacks.h"
 
 int qspMSCount = 0;
 

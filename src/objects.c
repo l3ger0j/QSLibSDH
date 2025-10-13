@@ -16,11 +16,6 @@
 */
 
 #include "objects.h"
-#include "errors.h"
-#include "game.h"
-#include "locations.h"
-#include "text.h"
-#include "variables.h"
 
 QSPObj qspCurObjects[QSP_MAXOBJECTS];
 int qspCurObjectsCount = 0;

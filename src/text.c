@@ -16,11 +16,6 @@
 */
 
 #include "text.h"
-#include "coding.h"
-#include "errors.h"
-#include "locations.h"
-#include "mathops.h"
-#include "variables.h"
 
 int qspAddText(QSP_CHAR **dest, QSP_CHAR *val, int destLen, int valLen, QSP_BOOL isCreate)
 {
