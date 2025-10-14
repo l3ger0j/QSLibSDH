@@ -204,7 +204,7 @@ INLINE int qspProcessEOLExtensions(QSPLineOfCode *s, int count, QSPLineOfCode **
 			ret = (QSPLineOfCode *)realloc(ret, bufSize * sizeof(QSPLineOfCode));
 		}
 		qspInitLineOfCode(ret + newCount - 1, str, lastNum);
-		++i;
+		if (++i == count) break;
 		lastNum = s[i].LineNum;
 	}
 	*strs = ret;
