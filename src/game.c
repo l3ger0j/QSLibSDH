@@ -318,7 +318,6 @@ void qspOpenQuestFromFD(const int fd, QSP_CHAR *fileName, const QSP_BOOL isAddLo
 	fseek(f, 0, SEEK_SET);
 	fread(buf, 1, fileSize, f);
 	fclose(f);
-	close(fd);
 	buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
 	qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
 
@@ -466,7 +465,6 @@ void qspSaveGameStatusByFD(const int fd)
 		free(buf);
 	}
 	fclose(f);
-	close(fd);
 }
 
 void qspSaveGameStatus(QSP_CHAR *fileName)
