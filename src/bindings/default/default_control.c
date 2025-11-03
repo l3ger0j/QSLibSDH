@@ -31,6 +31,7 @@
 #include "../../text.h"
 #include "../../time.h"
 #include "../../variables.h"
+#include "../../common.h"
 
 /* ------------------------------------------------------------ */
 QSP_BOOL QSPIsInCallBack()
@@ -511,36 +512,13 @@ void QSPInit()
 	#ifdef _DEBUG
 		mwInit();
 	#endif
-	qspIsDebug = QSP_FALSE;
-	qspRefreshCount = qspFullRefreshCount = 0;
-	qspQstPath = qspQstFullPath = 0;
-	qspQstPathLen = 0;
-	qspQstCRC = 0;
-	qspRealCurLoc = -1;
-	qspRealActIndex = -1;
-	qspRealLine = 0;
-	qspMSCount = 0;
-	qspLocs = 0;
-	qspLocsNames = 0;
-	qspLocsCount = 0;
-	qspCurLoc = -1;
-	qspTimerInterval = 0;
-	qspCurIsShowObjs = qspCurIsShowActs = qspCurIsShowVars = qspCurIsShowInput = QSP_TRUE;
-	setlocale(LC_ALL, QSP_LOCALE);
-	qspSetSeed(0);
-	qspPrepareExecution();
-	qspMemClear(QSP_TRUE);
-	qspInitCallBacks();
-	qspInitStats();
-	qspInitMath();
+	qspInitRuntime();
 }
 /* Деинициализация */
 void QSPDeInit()
 {
-	qspMemClear(QSP_FALSE);
-	qspCreateWorld(0, 0);
-	if (qspQstPath) free(qspQstPath);
-	if (qspQstFullPath) free(qspQstFullPath);
+	qspTerminateRuntime();
+
 	#ifdef _DEBUG
 		mwTerm();
 	#endif

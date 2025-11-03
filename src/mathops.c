@@ -1078,7 +1078,7 @@ INLINE void qspFunctionIsPlay(QSPVariant *args, int count, QSPVariant *tos)
 	QSP_CHAR *file;
 	if (qspIsAnyString(QSP_STR(args[0])))
 	{
-		file = qspGetAbsFromRelPath(QSP_STR(args[0]));
+        file = qspGetPathAsIs(QSP_STR(args[0]));
 		QSP_PNUM(tos) = -(qspCallIsPlayingFile(file) != 0);
 		free(file);
 	}

@@ -25,12 +25,10 @@
 #include "../../errors.h"
 #include "../../game.h"
 #include "../../locations.h"
-#include "../../mathops.h"
 #include "../../menu.h"
 #include "../../objects.h"
 #include "../../statements.h"
 #include "../../text.h"
-#include "../../time.h"
 #include "../../variables.h"
 
 JavaVM *ndkJvm;
@@ -678,49 +676,26 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_restartGame(JNIEnv *en
 /* Initialization */
 JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject this)
 {
-	qspIsDebug = QSP_FALSE;
-	qspRefreshCount = qspFullRefreshCount = 0;
-	qspQstPath = qspQstFullPath = 0;
-	qspQstPathLen = 0;
-	qspQstCRC = 0;
-	qspRealCurLoc = -1;
-	qspRealActIndex = -1;
-	qspRealLine = 0;
-	qspMSCount = 0;
-	qspLocs = 0;
-	qspLocsNames = 0;
-	qspLocsCount = 0;
-	qspCurLoc = -1;
-	qspTimerInterval = 0;
-	qspCurIsShowObjs = qspCurIsShowActs = qspCurIsShowVars = qspCurIsShowInput = QSP_TRUE;
-	setlocale(LC_ALL, QSP_LOCALE);
-	qspSetSeed(0);
-	qspPrepareExecution();
-	qspMemClear(QSP_TRUE);
-	qspInitCallBacks();
-	qspInitStats();
-	qspInitMath();
-
-	jclass clazz;
+	qspInitRuntime();
 
 	/* Get JVM references */
 	(*env)->GetJavaVM(env, &ndkJvm);
 
-	clazz = (*env)->FindClass(env, "com/libsdhqs/jni/QSLibSDH");
-	ndkApiClass = (jclass)(*env)->NewGlobalRef(env, clazz);
-	ndkApiObject = (jobject)(*env)->NewGlobalRef(env, this);
+	jclass clazz = (*env)->FindClass(env, "com/libsdhqs/jni/QSLibSDH");
+	ndkApiClass = (*env)->NewGlobalRef(env, clazz);
+	ndkApiObject = (*env)->NewGlobalRef(env, this);
 
 	clazz = (*env)->FindClass(env, "com/libsdhqs/jni/QSLibSDH$ListItem");
-	ndkListItemClass = (jclass)(*env)->NewGlobalRef(env, clazz);
+	ndkListItemClass = (*env)->NewGlobalRef(env, clazz);
 
 	clazz = (*env)->FindClass(env, "com/libsdhqs/jni/QSLibSDH$ExecutionState");
-	ndkExecutionStateClass = (jclass)(*env)->NewGlobalRef(env, clazz);
+	ndkExecutionStateClass = (*env)->NewGlobalRef(env, clazz);
 
 	clazz = (*env)->FindClass(env, "com/libsdhqs/jni/QSLibSDH$ErrorData");
-	ndkErrorInfoClass = (jclass)(*env)->NewGlobalRef(env, clazz);
+	ndkErrorInfoClass = (*env)->NewGlobalRef(env, clazz);
 
 	clazz = (*env)->FindClass(env, "com/libsdhqs/jni/QSLibSDH$VarValResp");
-	ndkVarValResp = (jclass)(*env)->NewGlobalRef(env, clazz);
+	ndkVarValResp = (*env)->NewGlobalRef(env, clazz);
 
 	/* Get references to callbacks */
 	qspSetCallBack(QSP_CALL_DEBUG, (*env)->GetMethodID(env, ndkApiClass, "onCallDebug", "(Ljava/lang/String;)V"));
@@ -748,10 +723,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject 
 /* Deinitialization */
 JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_terminate(JNIEnv *env, jobject this)
 {
-	qspMemClear(QSP_FALSE);
-	qspCreateWorld(0, 0);
-	if (qspQstPath) free(qspQstPath);
-	if (qspQstFullPath) free(qspQstFullPath);
+	qspTerminateRuntime();
 
 	/* Release references */
 	(*env)->DeleteGlobalRef(env, ndkApiObject);
