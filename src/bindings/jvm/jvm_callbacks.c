@@ -160,6 +160,7 @@ void qspCallOpenGame(QSP_CHAR* file)
 
 void qspCallSaveGame(QSP_CHAR* file)
 {
+	if (file == NULL) return;
 	if (qspCallBacks[QSP_CALL_SAVEGAMESTATUS]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
@@ -289,6 +290,7 @@ int qspCallGetMSCount(void)
 
 void qspCallCloseFile(QSP_CHAR* file)
 {
+	if (file == NULL) return;
 	if (qspCallBacks[QSP_CALL_CLOSEFILE])
 	{
 		QSPCallState state;
@@ -324,13 +326,11 @@ QSP_CHAR* qspCallInputBox(QSP_CHAR* text)
 		jstring qspText = ndkToJavaString(javaEnv, text);
 
 		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
-		jstring jResult = (jstring)((*javaEnv)->CallObjectMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_INPUTBOX], qspText));
-		const char* str = (*javaEnv)->GetStringUTFChars(javaEnv, jResult, NULL);
-		if (str != NULL)
+		jstring jResult = (*javaEnv)->CallObjectMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_INPUTBOX], qspText);
+		if (jResult != NULL)
 			buffer = ndkFromJavaString(javaEnv, jResult);
 		else
 			buffer = qspGetNewText(QSP_FMT(""), 0);
-		(*javaEnv)->ReleaseStringUTFChars(javaEnv, jResult, str);
 		(*javaEnv)->DeleteLocalRef(javaEnv, qspText);
 		qspRestoreCallState(&state);
 		return buffer;

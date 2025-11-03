@@ -18,6 +18,8 @@
 #ifndef QSP_DEFAULTDEFINES
 	#define QSP_DEFAULTDEFINES
 
+	static int qspEndiannessTestValue = 1;
+
 	#ifdef _UNICODE
 		typedef wchar_t QSP_CHAR;
 		#define QSP_FMT2(x) L##x
@@ -70,6 +72,10 @@
 			#define QSP_ONIG_ENC ONIG_ENCODING_KOI8_R
 		#endif
 	#endif
+
+	#define QSP_FIXBYTESORDER(a) ((*(char *)&(qspEndiannessTestValue) == 1) ? \
+			(a) : \
+			((unsigned short)(((a) << 8) | ((a) >> 8))))
 
 	#ifdef _MSC_VER
 		#define QSP_TIME _time64

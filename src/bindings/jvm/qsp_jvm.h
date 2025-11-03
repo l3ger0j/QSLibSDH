@@ -19,6 +19,7 @@
 	#define QSP_JVMDEFINES
 
 	#include <jni.h>
+	static int qspEndiannessTestValue = 1;
 
 	#ifdef _UNICODE
 		#ifdef _WIN32
@@ -53,6 +54,10 @@
 	#else
 		#error "Non-Unicode build using JVM binding is not supported"
 	#endif
+
+	#define QSP_FIXBYTESORDER(a) ((*(char *)&(qspEndiannessTestValue) == 1) ? \
+			(a) : \
+			((unsigned short)(((a) << 8) | ((a) >> 8))))
 
 	#ifdef _MSC_VER
 		#define QSP_TIME _time64

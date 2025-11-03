@@ -301,12 +301,12 @@ char *qspFromQSPString(QSP_CHAR *s)
 
 INLINE char *qspQSPToGameString(QSP_CHAR *s, QSP_BOOL isUCS2, QSP_BOOL isCode)
 {
-	unsigned short uCh, *ptr;
 	int len = qspStrLen(s);
-	char ch, *ret = (char *)malloc((len + 1) * (isUCS2 ? 2 : 1));
+	char ch, *ret = malloc((len + 1) * (isUCS2 ? 2 : 1));
 	if (isUCS2)
 	{
-		ptr = (unsigned short *)ret;
+		unsigned short uCh;
+		unsigned short *ptr = (unsigned short *) ret;
 		ptr[len] = 0;
 		if (isCode)
 		{
@@ -317,13 +317,16 @@ INLINE char *qspQSPToGameString(QSP_CHAR *s, QSP_BOOL isUCS2, QSP_BOOL isCode)
 					uCh = (unsigned short)-QSP_CODREMOV;
 				else
 					uCh -= QSP_CODREMOV;
-				ptr[len] = uCh;
+				ptr[len] = QSP_FIXBYTESORDER(uCh);
 			}
 		}
 		else
 		{
 			while (--len >= 0)
-				ptr[len] = QSP_BTOWC(s[len]);
+			{
+				uCh = QSP_BTOWC(s[len]);
+				ptr[len] = QSP_FIXBYTESORDER(uCh);
+			}
 		}
 	}
 	else
@@ -364,7 +367,7 @@ QSP_CHAR *qspGameToQSPString(char *s, QSP_BOOL isUCS2, QSP_BOOL isCoded)
 		{
 			while (--len >= 0)
 			{
-				uCh = ptr[len];
+				uCh = QSP_FIXBYTESORDER(ptr[len]);
 				if (uCh == (unsigned short)-QSP_CODREMOV)
 					uCh = QSP_CODREMOV;
 				else
@@ -375,7 +378,10 @@ QSP_CHAR *qspGameToQSPString(char *s, QSP_BOOL isUCS2, QSP_BOOL isCoded)
 		else
 		{
 			while (--len >= 0)
-				ret[len] = QSP_WCTOB(ptr[len]);
+			{
+				uCh = QSP_FIXBYTESORDER(ptr[len]);
+				ret[len] = QSP_WCTOB(uCh);
+			}
 		}
 	}
 	else
