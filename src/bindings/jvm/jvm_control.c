@@ -159,7 +159,7 @@ JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getExprValue(JNIEnv *en
 JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_setInputStrText(JNIEnv *env, jobject this, jstring val)
 {
 	QSP_CHAR *strConverted = ndkFromJavaString(env, val);
-	qspCurInputLen = qspAddText(&strConverted, strConverted, 0, -1, QSP_FALSE);
+	qspCurInputLen = qspAddText(&qspCurInput, strConverted, 0, -1, QSP_FALSE);
 	free(strConverted);
 }
 /* ------------------------------------------------------------ */
