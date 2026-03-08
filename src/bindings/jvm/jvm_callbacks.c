@@ -349,7 +349,11 @@ int qspCallGetFileDesc(QSP_CHAR* fileName)
 		const jstring javaFileName = ndkToJavaString(javaEnv, fileName);
 		const jint fileDesc = (*javaEnv)->CallIntMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_GETFILEDESC], javaFileName);
 		(*javaEnv)->DeleteLocalRef(javaEnv, javaFileName);
-		if (!fileDesc) return -1;
+		if (!fileDesc)
+		{
+			qspRestoreCallState(&state);
+			return -1;
+		}
 
 		qspRestoreCallState(&state);
 		return fileDesc;
