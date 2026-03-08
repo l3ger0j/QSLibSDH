@@ -180,30 +180,4 @@ QSP_CHAR *ndkFromJavaString(JNIEnv *env, jstring str)
 	return res;
 }
 
-JNIListItem ndkToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *text)
-{
-	JNIListItem res;
-	jfieldID fieldId;
-	jobject jniListItem = (*env)->AllocObject(env, ndkListItemClass);
-
-	res.ListItem = jniListItem;
-	res.Image = ndkToJavaString(env, image);
-	res.Name = ndkToJavaString(env, text);
-
-	fieldId = (*env)->GetFieldID(env, ndkListItemClass, "image", "Ljava/lang/String;");
-	(*env)->SetObjectField(env, jniListItem, fieldId, res.Image);
-
-	fieldId = (*env)->GetFieldID(env, ndkListItemClass, "text", "Ljava/lang/String;");
-	(*env)->SetObjectField(env, jniListItem, fieldId, res.Name);
-
-	return res;
-}
-
-void ndkReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem)
-{
-	(*env)->DeleteLocalRef(env, listItem->ListItem);
-	(*env)->DeleteLocalRef(env, listItem->Image);
-	(*env)->DeleteLocalRef(env, listItem->Name);
-}
-
 #endif

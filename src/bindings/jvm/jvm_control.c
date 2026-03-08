@@ -40,6 +40,42 @@ jclass ndkExecutionStateClass;
 jclass ndkErrorInfoClass;
 jclass ndkVarValResp;
 
+jfieldID fieldImageID = NULL;
+jfieldID fieldTextID = NULL;
+
+void initFieldIDs(JNIEnv *env) {
+	if (fieldImageID == NULL) {
+		fieldImageID = (*env)->GetFieldID(env, ndkListItemClass, "image", "Ljava/lang/String;");
+	}
+	if (fieldTextID == NULL) {
+		fieldTextID = (*env)->GetFieldID(env, ndkListItemClass, "text", "Ljava/lang/String;");
+	}
+}
+
+JNIListItem ndkToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *text)
+{
+	JNIListItem res;
+	initFieldIDs(env);
+
+	jobject jniListItem = (*env)->AllocObject(env, ndkListItemClass);
+
+	res.ListItem = jniListItem;
+	res.Image = ndkToJavaString(env, image);
+	res.Name = ndkToJavaString(env, text);
+
+	(*env)->SetObjectField(env, jniListItem, fieldImageID, res.Image);
+	(*env)->SetObjectField(env, jniListItem, fieldTextID, res.Name);
+
+	return res;
+}
+
+void ndkReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem)
+{
+	if (listItem->ListItem) (*env)->DeleteLocalRef(env, listItem->ListItem);
+	if (listItem->Image) (*env)->DeleteLocalRef(env, listItem->Image);
+	if (listItem->Name) (*env)->DeleteLocalRef(env, listItem->Name);
+}
+
 /* ------------------------------------------------------------ */
 /* Debugging */
 
@@ -176,12 +212,18 @@ JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getActions(JNIEnv 
 {
 	int i;
 	JNIListItem item;
-	jobjectArray res = (*env)->NewObjectArray(env, qspCurActionsCount, ndkListItemClass, 0);
+
+	if (qspCurActionsCount < 0) return NULL;
+
+	jobjectArray res = (*env)->NewObjectArray(env, qspCurActionsCount, ndkListItemClass, NULL);
+
 	for (i = 0; i < qspCurActionsCount; ++i)
 	{
 		item = ndkToJavaListItem(env, qspCurActions[i].Image, qspCurActions[i].Desc);
 		(*env)->SetObjectArrayElement(env, res, i, item.ListItem);
+		ndkReleaseJavaListItem(env, &item);
 	}
+
 	return res;
 }
 
@@ -241,12 +283,18 @@ JNIEXPORT jobjectArray JNICALL Java_com_libsdhqs_jni_QSLibSDH_getObjects(JNIEnv 
 {
 	int i;
 	JNIListItem item;
-	jobjectArray res = (*env)->NewObjectArray(env, qspCurObjectsCount, ndkListItemClass, 0);
+
+	if (qspCurObjectsCount < 0) return NULL;
+
+	jobjectArray res = (*env)->NewObjectArray(env, qspCurObjectsCount, ndkListItemClass, NULL);
+
 	for (i = 0; i < qspCurObjectsCount; ++i)
 	{
 		item = ndkToJavaListItem(env, qspCurObjects[i].Image, qspCurObjects[i].Desc);
 		(*env)->SetObjectArrayElement(env, res, i, item.ListItem);
+		ndkReleaseJavaListItem(env, &item);
 	}
+
 	return res;
 }
 
@@ -371,14 +419,19 @@ JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarNameByIndex(JNIEn
 /* Executing a line of code */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execString(JNIEnv *env, jobject this, jstring s, jboolean isRefresh)
 {
-	QSP_CHAR *strConverted = ndkFromJavaString(env, s);
-
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
 	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	if (s == NULL) return QSP_FALSE;
+
+	QSP_CHAR *strConverted = ndkFromJavaString(env, s);
+	if (strConverted == NULL) return QSP_FALSE;
+
 	qspExecStringAsCodeWithArgs(strConverted, 0, 0);
+
 	if (qspErrorNum) return QSP_FALSE;
-	if ((QSP_BOOL)isRefresh) qspCallRefreshInt(QSP_FALSE);
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
 
 	return QSP_TRUE;
 }
@@ -386,14 +439,19 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execString(JNIEnv *env
 /* Executing the code of the specified location */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execLocationCode(JNIEnv *env, jobject this, jstring name, jboolean isRefresh)
 {
-	QSP_CHAR *strConverted = ndkFromJavaString(env, name);
-
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
 	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	if (name == NULL) return JNI_FALSE;
+
+	QSP_CHAR *strConverted = ndkFromJavaString(env, name);
+	if (strConverted == NULL) return QSP_FALSE;
+
 	qspExecLocByName(strConverted, QSP_FALSE);
+
 	if (qspErrorNum) return QSP_FALSE;
-	if ((QSP_BOOL)isRefresh) qspCallRefreshInt(QSP_FALSE);
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
 
 	return JNI_TRUE;
 }
@@ -745,6 +803,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_terminate(JNIEnv *env, job
 	(*env)->DeleteGlobalRef(env, ndkListItemClass);
 	(*env)->DeleteGlobalRef(env, ndkExecutionStateClass);
 	(*env)->DeleteGlobalRef(env, ndkErrorInfoClass);
+	(*env)->DeleteGlobalRef(env, ndkVarValResp);
 }
 
 #endif

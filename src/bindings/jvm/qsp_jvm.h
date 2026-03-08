@@ -90,7 +90,5 @@
 	QSP_CHAR *qspC2W(char *);
 	jstring ndkToJavaString(JNIEnv *env, QSP_CHAR *str);
 	QSP_CHAR *ndkFromJavaString(JNIEnv *env, jstring str);
-	JNIListItem ndkToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *name);
-	void ndkReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem);
 
 #endif
