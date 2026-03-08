@@ -642,13 +642,27 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromData(
 	qspPrepareExecution();
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
+	if (data == NULL) return QSP_FALSE;
 
 	const jint dataSize = (*env)->GetArrayLength(env, data);
+	if (dataSize <= 0) return QSP_FALSE;
+	if (dataSize % sizeof(QSP_CHAR) != 0) return QSP_FALSE;
+
 	const int dataLen = dataSize / sizeof(QSP_CHAR);
-	QSP_CHAR *ptr = malloc(dataLen * sizeof(QSP_CHAR));
-	jbyte *arrayData = (*env)->GetByteArrayElements(env, data, 0);
-	memcpy(ptr, arrayData, dataLen);
+
+	QSP_CHAR *ptr = malloc((dataLen + 1) * sizeof(QSP_CHAR));
+	if (ptr == NULL) return QSP_FALSE;
+
+	jbyte *arrayData = (*env)->GetByteArrayElements(env, data, NULL);
+	if (arrayData == NULL) {
+		free(ptr);
+		return QSP_FALSE;
+	}
+
+	memcpy(ptr, arrayData, dataLen * sizeof(QSP_CHAR));
+
 	(*env)->ReleaseByteArrayElements(env, data, arrayData, JNI_ABORT);
+
 	ptr[dataLen] = 0;
 
 	qspOpenGameStatusFromString(ptr);
