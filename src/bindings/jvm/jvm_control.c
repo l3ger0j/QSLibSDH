@@ -430,6 +430,8 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execString(JNIEnv *env
 
 	qspExecStringAsCodeWithArgs(strConverted, 0, 0);
 
+	free(strConverted);
+
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
 
@@ -449,6 +451,8 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_execLocationCode(JNIEn
 	if (strConverted == NULL) return QSP_FALSE;
 
 	qspExecLocByName(strConverted, QSP_FALSE);
+
+	free(strConverted);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
