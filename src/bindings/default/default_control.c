@@ -33,6 +33,54 @@
 #include "../../variables.h"
 #include "../../common.h"
 
+void qspOpenQuestFromFILE(FILE *f, QSP_CHAR *fileName, const QSP_BOOL isAddLocs)
+{
+	fseek(f, 0, SEEK_END);
+	const int fileSize = ftell(f);
+
+	char *buf = malloc(fileSize + 3);
+	if (buf != NULL)
+	{
+		fseek(f, 0, SEEK_SET);
+		fread(buf, 1, fileSize, f);
+
+		buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
+
+		qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
+		free(buf);
+	} else {
+		qspSetError(QSP_ERR_FILENOTFOUND);
+	}
+}
+
+void qspOpenGameStatusFromFILE(FILE *f)
+{
+	int fileLen;
+	QSP_CHAR *buf;
+
+	fseek(f, 0, SEEK_END);
+	fileLen = ftell(f) / sizeof(QSP_CHAR);
+	buf = (QSP_CHAR *)malloc((fileLen + 1) * sizeof(QSP_CHAR));
+
+	fseek(f, 0, SEEK_SET);
+	fread(buf, sizeof(QSP_CHAR), fileLen, f);
+	buf[fileLen] = 0;
+
+	qspOpenGameStatusFromString(buf);
+	free(buf);
+}
+
+void qspSaveGameStatusToFILE(FILE *f)
+{
+	int len;
+	QSP_CHAR *buf;
+	if ((len = qspSaveGameStatusToString(&buf)))
+	{
+		fwrite(buf, sizeof(QSP_CHAR), len, f);
+		free(buf);
+	}
+}
+
 /* ------------------------------------------------------------ */
 QSP_BOOL QSPIsInCallBack()
 {
@@ -398,11 +446,26 @@ const QSP_CHAR *QSPGetErrorDesc(int errorNum)
 /* Загрузка новой игры из файла */
 QSP_BOOL QSPLoadGameWorld(const QSP_CHAR *fileName)
 {
+	if (fileName == NULL) return QSP_FALSE;
+
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspResetError();
+
 	if (qspIsDisableCodeExec) return QSP_FALSE;
-	qspOpenQuest((QSP_CHAR *)fileName, QSP_FALSE);
+
+	FILE *f = QSP_FOPEN(fileName, QSP_FMT("rb"));
+	if (f == NULL)
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
+	qspOpenQuestFromFILE(f, fileName, QSP_FALSE);
+
+	fclose(f);
+
 	if (qspErrorNum) return QSP_FALSE;
+
 	return QSP_TRUE;
 }
 /* Загрузка новой игры из памяти */
@@ -418,12 +481,27 @@ QSP_BOOL QSPLoadGameWorldFromData(const char *data, int dataSize, const QSP_CHAR
 /* Сохранение состояния в файл */
 QSP_BOOL QSPSaveGame(const QSP_CHAR *fileName, QSP_BOOL isRefresh)
 {
+	if (fileName == NULL) return QSP_FALSE;
+
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
+
 	if (qspIsDisableCodeExec) return QSP_FALSE;
-	qspSaveGameStatus((QSP_CHAR *)fileName);
+
+	FILE *f = QSP_FOPEN(fileName, QSP_FMT("wb"));
+	if (f == NULL)
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
+	qspSaveGameStatusToFILE(f);
+
+	fclose(f);
+
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
 	return QSP_TRUE;
 }
 /* Сохранение состояния в память */
@@ -455,12 +533,27 @@ QSP_BOOL QSPSaveGameAsString(QSP_CHAR *strBuf, int strBufSize, int *realSize, QS
 /* Загрузка состояния из файла */
 QSP_BOOL QSPOpenSavedGame(const QSP_CHAR *fileName, QSP_BOOL isRefresh)
 {
+	if (fileName == NULL) return QSP_FALSE;
+
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
+
 	if (qspIsDisableCodeExec) return QSP_FALSE;
-	qspOpenGameStatus((QSP_CHAR *)fileName);
+
+	FILE *f = QSP_FOPEN(fileName, QSP_FMT("wb"));
+	if (f == NULL)
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
+	qspOpenGameStatusFromFILE(f);
+
+	fclose(f);
+
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
 	return QSP_TRUE;
 }
 /* Загрузка состояния из памяти */
