@@ -28,12 +28,6 @@
 #include <wchar.h>
 #include <wctype.h>
 
-#ifdef _WIN32
-	#include <io.h>
-#else
-	#include <unistd.h>
-#endif
-
 /* MEMWATCH */
 
 #ifdef _DEBUG

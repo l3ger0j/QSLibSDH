@@ -49,8 +49,6 @@
 		#else
 			#define QSP_FOPEN qspFileOpen
 		#endif
-
-		#define QSP_FDOPEN fdopen
 	#else
 		#error "Non-Unicode build using JVM binding is not supported"
 	#endif
@@ -90,5 +88,9 @@
 	QSP_CHAR *qspC2W(char *);
 	jstring ndkToJavaString(JNIEnv *env, QSP_CHAR *str);
 	QSP_CHAR *ndkFromJavaString(JNIEnv *env, jstring str);
+
+	void qspOpenQuestFromFILE(FILE *, QSP_CHAR *, QSP_BOOL);
+	void qspSaveGameStatusToFILE(FILE *);
+	void qspOpenGameStatusFromFILE(FILE *);
 
 #endif

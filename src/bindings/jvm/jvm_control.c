@@ -561,23 +561,43 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env
 		qspExecLocByNameWithArgs(qspCurMenuLocs[ind], &arg, 1);
 	}
 }
+
 /* ------------------------------------------------------------ */
 /* Game Management */
+
+#ifdef __ANDROID__
 
 /* Working with FileDescriptor */
 
 /* Loading a new game from FileDescriptor */
+
+#include <unistd.h>
+
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jstring fileName)
 {
-	if (fileDescriptor < 0) return JNI_ERR;
+	if (fileDescriptor < 0) return QSP_FALSE;
 
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspResetError();
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
+	const int native_fd = dup(fileDescriptor);
+	if (native_fd < 0) return QSP_FALSE;
+
+    FILE *f = fdopen(native_fd, "rb");
+	if (f == NULL)
+	{
+		close(native_fd);
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
 	QSP_CHAR* name = ndkFromJavaString(env, fileName);
-	qspOpenQuestFromFD(fileDescriptor, name, QSP_FALSE);
+
+	qspOpenQuestFromFILE(fileDescriptor, name, QSP_FALSE);
+
+	fclose(f);
 	free(name);
 
 	if (qspErrorNum) return QSP_FALSE;
@@ -588,21 +608,30 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 /* Saving state by FileDescriptor */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *env, jobject this, jint fileDescriptor, jboolean isRefresh)
 {
-	if (fileDescriptor < 0) return JNI_ERR;
+	if (fileDescriptor < 0) return QSP_FALSE;
 
 	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	qspSaveGameStatusByFD(fileDescriptor);
+	const int native_fd = dup(fileDescriptor);
+	if (native_fd < 0) return QSP_FALSE;
+
+	FILE *f = fdopen(native_fd, "wb");
+	if (!f) {
+		close(native_fd);
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+	qspSaveGameStatusToFILE(f);
+	fclose(f);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
 
 	return QSP_TRUE;
 }
-
 
 /* Loading state from FileDescriptor */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jboolean isRefresh)
@@ -614,7 +643,117 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JN
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	qspOpenGameStatusFromFD(fileDescriptor);
+	const int native_fd = dup(fileDescriptor);
+	if (native_fd < 0) return QSP_FALSE;
+
+	FILE *f = fdopen(native_fd, "rb");
+	if (!f) {
+		close(native_fd);
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+	qspOpenGameStatusFromFILE(f);
+	fclose(f);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
+}
+
+#endif
+
+/* Working with file */
+
+/* Loading a new game from file */
+
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromPath(JNIEnv *env, jobject this, jstring filePath, jstring fileName)
+{
+	if (filePath == NULL) return QSP_FALSE;
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspResetError();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	QSP_CHAR* path = ndkFromJavaString(env, filePath);
+	QSP_CHAR* name = ndkFromJavaString(env, fileName);
+
+	FILE *f = QSP_FOPEN(path, QSP_FMT("rb"));
+	if (f == NULL)
+	{
+		free(path);
+		free(name);
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
+	qspOpenQuestFromFILE(f, name, QSP_FALSE);
+
+	fclose(f);
+	free(path);
+	free(name);
+
+	if (qspErrorNum) return QSP_FALSE;
+
+	return QSP_TRUE;
+}
+
+/* Saving state to file */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByPath(JNIEnv *env, jobject this, jstring filePath, jboolean isRefresh)
+{
+	if (filePath == NULL) return QSP_FALSE;
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	QSP_CHAR* path = ndkFromJavaString(env, filePath);
+
+	FILE *f = QSP_FOPEN(path, QSP_FMT("wb"));
+	if (f == NULL)
+	{
+		free(path);
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
+	qspSaveGameStatusToFILE(f);
+
+	fclose(f);
+	free(path);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
+}
+
+/* Loading state from file */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromPath(JNIEnv *env, jobject this, jstring filePath, jboolean isRefresh)
+{
+	if (filePath == NULL) return QSP_FALSE;
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	QSP_CHAR* path = ndkFromJavaString(env, filePath);
+
+	FILE *f = QSP_FOPEN(path, QSP_FMT("rb"));
+	if (f == NULL)
+	{
+		free(path);
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return QSP_FALSE;
+	}
+
+	qspOpenGameStatusFromFILE(f);
+
+	fclose(f);
+	free(path);
 
 	if (qspErrorNum) return QSP_FALSE;
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);

@@ -42,8 +42,6 @@
 		#else
 			#define QSP_FOPEN qspFileOpen
 		#endif
-
-		#define QSP_FDOPEN
 	#else
 		typedef char QSP_CHAR;
 		#define QSP_FMT(x) x
