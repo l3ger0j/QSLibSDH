@@ -319,8 +319,7 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 		qspQstCRC = crc;
 		qspCurLoc = -1;
 
-		#ifdef ANDROID
-			// Notify application on quest path change
+		#ifdef __ANDROID__
 			qspCallChangeQuestPath(qspQstPath);
 		#endif
 	}
@@ -328,14 +327,8 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 
 void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 {
-	#ifdef ANDROID
-		const int desc = qspCallGetFileDesc(fileName);
-		if (!desc) {
-			qspSetError(QSP_ERR_FILENOTFOUND);
-			return;
-		}
-
-		qspOpenQuestFromFD(desc, fileName, isAddLocs);
+	#ifdef __ANDROID__
+		qspCallOpenQuest(fileName);
 	#else
 		FILE * f;
 		if (!(f = QSP_FOPEN(fileName, QSP_FMT("rb"))))

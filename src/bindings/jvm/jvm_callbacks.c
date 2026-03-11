@@ -20,11 +20,7 @@
 #ifdef _JVM_BINDING
 
 #include "../../callbacks.h"
-#include "../../actions.h"
-#include "../../coding.h"
-#include "../../common.h"
 #include "../../errors.h"
-#include "../../objects.h"
 #include "../../text.h"
 
 INLINE JNIEnv* ndkGetJniEnv()
@@ -143,6 +139,56 @@ void qspCallSystem(QSP_CHAR* cmd)
 		qspRestoreCallState(&state);
 	}
 }
+
+#ifdef __ANDROID__
+
+#include <unistd.h>
+
+void qspCallOpenQuest(QSP_CHAR* fileName)
+{
+	if (fileName == NULL) return;
+
+	if (qspCallBacks[QSP_CALL_OPENGAME]) {
+		QSPCallState state;
+		JNIEnv *javaEnv = ndkGetJniEnv();
+
+		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
+		const jstring javaFileName = ndkToJavaString(javaEnv, fileName);
+		const jint fileDesc = (*javaEnv)->CallIntMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_OPENGAME], javaFileName);
+		(*javaEnv)->DeleteLocalRef(javaEnv, javaFileName);
+		if (!fileDesc)
+		{
+			qspRestoreCallState(&state);
+			return;
+		}
+
+		qspRestoreCallState(&state);
+
+		if (fileDesc < 0) return;
+
+		if (qspIsExitOnError && qspErrorNum) return;
+		qspResetError();
+
+		if (qspIsDisableCodeExec) return;
+
+		const int native_fd = dup(fileDesc);
+		if (native_fd < 0) return;
+
+		FILE *f = fdopen(native_fd, "rb");
+		if (f == NULL)
+		{
+			close(native_fd);
+			qspSetError(QSP_ERR_FILENOTFOUND);
+			return;
+		}
+
+		qspOpenQuestFromFILE(f, fileName, QSP_FALSE);
+
+		fclose(f);
+	}
+}
+
+#endif
 
 void qspCallOpenGame(QSP_CHAR* file)
 {
@@ -338,39 +384,14 @@ QSP_CHAR* qspCallInputBox(QSP_CHAR* text)
 	return qspGetNewText(QSP_FMT(""), 0);
 }
 
-int qspCallGetFileDesc(QSP_CHAR* fileName)
-{
-	if (fileName == NULL) return -1;
-	if (qspCallBacks[QSP_CALL_GETFILEDESC]) {
-		QSPCallState state;
-		JNIEnv *javaEnv = ndkGetJniEnv();
-
-		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
-		const jstring javaFileName = ndkToJavaString(javaEnv, fileName);
-		const jint fileDesc = (*javaEnv)->CallIntMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_GETFILEDESC], javaFileName);
-		(*javaEnv)->DeleteLocalRef(javaEnv, javaFileName);
-		if (!fileDesc)
-		{
-			qspRestoreCallState(&state);
-			return -1;
-		}
-
-		qspRestoreCallState(&state);
-		return fileDesc;
-	}
-	return -1;
-}
-
 void qspCallChangeQuestPath(QSP_CHAR* path)
 {
 	if (qspCallBacks[QSP_CALL_CHANGEQUESTPATH]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
-		// Convert QSP path to Java
 		jstring qspText = ndkToJavaString(javaEnv, path);
 
 		qspSaveCallState(&state, QSP_FALSE, QSP_FALSE);
-		// Call ChangeQuestPath
 		(*javaEnv)->CallVoidMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_CHANGEQUESTPATH], qspText);
 		(*javaEnv)->DeleteLocalRef(javaEnv, qspText);
 		qspRestoreCallState(&state);
