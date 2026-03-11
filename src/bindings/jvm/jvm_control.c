@@ -540,7 +540,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 
 	QSP_CHAR* name = ndkFromJavaString(env, fileName);
 
-	qspOpenQuestFromFILE(fileDescriptor, name, QSP_FALSE);
+	qspOpenQuestFromFILE(native_fd, name, QSP_FALSE);
 
 	fclose(f);
 	free(name);
