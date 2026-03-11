@@ -165,32 +165,6 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isVarsDescChanged(JNIE
 }
 
 /* ------------------------------------------------------------ */
-/* Get the value of the specified expression */
-//(const QSP_CHAR *expr, QSP_BOOL *isString, int *numVal, QSP_CHAR *strVal, int strValBufSize)
-JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getExprValue(JNIEnv *env, jobject this)
-{
-	//!!!STUB
-	//{
-	//	QSPVariant v;
-	//	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
-	//	qspResetError();
-	//	if (qspIsDisableCodeExec) return QSP_FALSE;
-	//	v = qspExprValue((QSP_CHAR *)expr);
-	//	if (qspErrorNum) return QSP_FALSE;
-	//	*isString = v.IsStr;
-	//	if (v.IsStr)
-	//	{
-	//		qspStrNCopy(strVal, QSP_STR(v), strValBufSize - 1);
-	//		free(QSP_STR(v));
-	//		strVal[strValBufSize - 1] = 0;
-	//	}
-	//	else
-	//		*numVal = QSP_NUM(v);
-	//	return QSP_TRUE;
-	//}
-	return NULL;
-}
-/* ------------------------------------------------------------ */
 /* Text of the input line */
 JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_setInputStrText(JNIEnv *env, jobject this, jstring val)
 {
@@ -328,23 +302,6 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_isObjectsChanged(JNIEn
 /* ------------------------------------------------------------ */
 /* Variables */
 
-/* Get the number of array elements */
-//QSP_BOOL QSPGetVarValuesCount(const QSP_CHAR *name, int *count)
-JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarValuesCount(JNIEnv *env, jobject this, jstring name)
-{
-	//!!!STUB
-	//{
-	//	QSPVar *var;
-	//	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
-	//	qspResetError();
-	//	var = qspVarReference((QSP_CHAR *)name, QSP_FALSE);
-	//	if (qspErrorNum) return QSP_FALSE;
-	//	*count = var->ValsCount;
-	//	return QSP_TRUE;
-	//}
-	return 0;
-}
-
 /* Get the values of the specified array element */
 //QSP_BOOL QSPGetVarValues(const QSP_CHAR *name, int ind, int *numVal, QSP_CHAR **strVal)
 QSP_BOOL QSPGetVarValues(const QSP_CHAR *name, int ind, int *numVal, QSP_CHAR **strVal)
@@ -400,18 +357,6 @@ JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarValues(JNIEnv *en
 JNIEXPORT jint JNICALL Java_com_libsdhqs_jni_QSLibSDH_getMaxVarsCount(JNIEnv *env, jobject this)
 {
 	return QSP_VARSCOUNT;
-}
-
-/* Get the variable name with the specified index */
-JNIEXPORT jobject JNICALL Java_com_libsdhqs_jni_QSLibSDH_getVarNameByIndex(JNIEnv *env, jobject this, jint index)
-{
-	//!!!STUB
-//{
-//	if (index < 0 || index >= QSP_VARSCOUNT || !qspVars[index].Name) return QSP_FALSE;
-//	*name = qspVars[index].Name;
-//	return QSP_TRUE;
-//}
-	return NULL;
 }
 /* ------------------------------------------------------------ */
 /* Code Execution */
@@ -661,7 +606,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JN
 	return QSP_TRUE;
 }
 
-#endif
+#else
 
 /* Working with file */
 
@@ -760,6 +705,8 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromPath(
 
 	return QSP_TRUE;
 }
+
+#endif
 
 /* Working with memory */
 
@@ -923,8 +870,6 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_init(JNIEnv *env, jobject 
 	qspSetCallBack(QSP_CALL_SHOWMSGSTR, (*env)->GetMethodID(env, ndkApiClass, "onShowMessage", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_REFRESHINT, (*env)->GetMethodID(env, ndkApiClass, "onRefreshInt", "()V"));
 	qspSetCallBack(QSP_CALL_SETTIMER, (*env)->GetMethodID(env, ndkApiClass, "onSetTimer", "(I)V"));
-//	qspSetCallBack(QSP_CALL_SETINPUTSTRTEXT, (*env)->GetMethodID(env, ndkApiClass, "", "(Ljava/lang/String;)V"));
-//	qspSetCallBack(QSP_CALL_SYSTEM, (*env)->GetMethodID(env, ndkApiClass, "onSystem", "(Ljava/lang/String;)V"));
 	#ifdef __ANDROID__
 	qspSetCallBack(QSP_CALL_OPENGAME, (*env)->GetMethodID(env, ndkApiClass, "onOpenGame", "(Ljava/lang/String;)I"));
 	#endif
