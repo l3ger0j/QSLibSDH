@@ -328,7 +328,7 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 {
 	#ifdef __ANDROID__
-		qspCallOpenQuest(fileName);
+		qspCallOpenQuest(fileName, isAddLocs);
 	#else
 		FILE * f;
 		if (!(f = QSP_FOPEN(fileName, QSP_FMT("rb"))))

@@ -144,7 +144,7 @@ void qspCallSystem(QSP_CHAR* cmd)
 
 #include <unistd.h>
 
-void qspCallOpenQuest(QSP_CHAR* fileName)
+void qspCallOpenQuest(QSP_CHAR* fileName, QSP_BOOL isAddLocs)
 {
 	if (fileName == NULL) return;
 
@@ -182,7 +182,7 @@ void qspCallOpenQuest(QSP_CHAR* fileName)
 			return;
 		}
 
-		qspOpenQuestFromFILE(f, fileName, QSP_FALSE);
+		qspOpenQuestFromFILE(f, fileName, isAddLocs);
 
 		fclose(f);
 	}
