@@ -94,6 +94,10 @@
 	{
 	#endif
 
+	void qspOpenQuestFromFILE(FILE *, const QSP_CHAR *, QSP_BOOL);
+	void qspSaveGameStatusToFILE(FILE *);
+	void qspOpenGameStatusFromFILE(FILE *);
+
 	QSLIBSDH_EXTERN QSP_BOOL QSPIsInCallBack();
 	QSLIBSDH_EXTERN void QSPEnableDebugMode(QSP_BOOL isDebug);
 	QSLIBSDH_EXTERN void QSPGetCurStateData(QSP_CHAR **loc, int *actIndex, int *line);

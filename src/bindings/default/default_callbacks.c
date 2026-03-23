@@ -112,6 +112,29 @@ void qspCallSystem(QSP_CHAR *cmd)
 	}
 }
 
+void qspCallOpenQuest(QSP_CHAR* fileName, QSP_BOOL isAddLocs)
+{
+	QSPCallState state;
+	if (qspCallBacks[QSP_CALL_OPENGAME])
+	{
+		qspSaveCallState(&state, QSP_FALSE, QSP_FALSE);
+
+		// qspCallBacks[QSP_CALL_OPENGAME](fileName, isAddLocs);
+
+		FILE *f = QSP_FOPEN(fileName, QSP_FMT("rb"));
+		if (f == NULL)
+		{
+			return;
+		}
+
+		qspOpenQuestFromFILE(f, fileName, isAddLocs);
+
+		fclose(f);
+
+		qspRestoreCallState(&state);
+	}
+}
+
 void qspCallOpenGame(QSP_CHAR *file)
 {
 	/* Here we allow the user to select the file */
