@@ -133,7 +133,7 @@ INLINE void qspIncludeFile(QSP_CHAR *s)
 	}
 	int oldCurIncLocsCount = qspCurIncLocsCount;
 	QSP_CHAR *file = qspGetAbsFromRelPath(s);
-	qspOpenQuest(file, QSP_TRUE);
+	qspCallOpenQuest(file, QSP_TRUE);
 	free(file);
 	if (qspErrorNum) return;
 	if (qspCurIncLocsCount != oldCurIncLocsCount)
@@ -145,7 +145,7 @@ INLINE void qspOpenIncludes()
 	for (int i = 0; i < qspCurIncFilesCount; ++i)
 	{
 		QSP_CHAR *file = qspGetAbsFromRelPath(qspCurIncFiles[i]);
-		qspOpenQuest(file, QSP_TRUE);
+		qspCallOpenQuest(file, QSP_TRUE);
 		free(file);
 		if (qspErrorNum) return;
 	}
@@ -323,29 +323,6 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 			qspCallChangeQuestPath(qspQstPath);
 		#endif
 	}
-}
-
-void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
-{
-	#ifdef __ANDROID__
-		qspCallOpenQuest(fileName, isAddLocs);
-	#else
-		FILE * f;
-		if (!(f = QSP_FOPEN(fileName, QSP_FMT("rb"))))
-		{
-			qspSetError(QSP_ERR_FILENOTFOUND);
-			return;
-		}
-		fseek(f, 0, SEEK_END);
-		const int fileSize = ftell(f);
-		char *buf = malloc(fileSize + 3);
-		fseek(f, 0, SEEK_SET);
-		fread(buf, 1, fileSize, f);
-		fclose(f);
-		buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
-		qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
-		free(buf);
-	#endif
 }
 
 int qspSaveGameStatusToString(QSP_CHAR **buf)
@@ -631,7 +608,7 @@ QSP_BOOL qspStatementOpenQst(QSPVariant *args, int count, QSP_CHAR **jumpTo, int
 		if (qspIsAnyString(QSP_STR(args[0])))
 		{
 			QSP_CHAR *file = qspGetAbsFromRelPath(QSP_STR(args[0]));
-			qspOpenQuest(file, QSP_FALSE);
+			qspCallOpenQuest(file, QSP_FALSE);
 			free(file);
 			if (qspErrorNum) return QSP_FALSE;
 			qspNewGame(QSP_FALSE);

@@ -93,7 +93,7 @@ public abstract class QSLibSDH {
     public boolean onIsPlayingFile(String path) { return false; }
     public void onCloseFile(String path) {}
 
-    public int onOpenGame(String path) { return -1; }
+    public void onOpenGame(String file, boolean isNewGame) {}
     public void onOpenGameStatus(String filename) {}
     public void onSaveGameStatus(String filename) {}
 

@@ -74,9 +74,7 @@
 		QSP_CALL_SETTIMER, /* void func(int msecs) */
 		QSP_CALL_SETINPUTSTRTEXT, /* void func(const QSP_CHAR *text) */
 		QSP_CALL_SYSTEM, /* void func(const QSP_CHAR *str) */
-		#ifdef __ANDROID__
-		QSP_CALL_OPENGAME, /* void func(const QSP_CHAR *file) */
-		#endif
+		QSP_CALL_OPENGAME, /* void func(const QSP_CHAR *fileName, QSP_BOOL isAddLocs) */
 		QSP_CALL_OPENGAMESTATUS, /* void func(const QSP_CHAR *file) */
 		QSP_CALL_SAVEGAMESTATUS, /* void func(const QSP_CHAR *file) */
 		QSP_CALL_SLEEP, /* void func(int msecs) */

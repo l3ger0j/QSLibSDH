@@ -140,10 +140,6 @@ void qspCallSystem(QSP_CHAR* cmd)
 	}
 }
 
-#ifdef __ANDROID__
-
-#include <unistd.h>
-
 void qspCallOpenQuest(QSP_CHAR* fileName, QSP_BOOL isAddLocs)
 {
 	if (fileName == NULL) return;
@@ -151,44 +147,14 @@ void qspCallOpenQuest(QSP_CHAR* fileName, QSP_BOOL isAddLocs)
 	if (qspCallBacks[QSP_CALL_OPENGAME]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
+		jstring jniFile = ndkToJavaString(javaEnv, fileName);
 
-		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
-		const jstring javaFileName = ndkToJavaString(javaEnv, fileName);
-		const jint fileDesc = (*javaEnv)->CallIntMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_OPENGAME], javaFileName);
-		(*javaEnv)->DeleteLocalRef(javaEnv, javaFileName);
-		if (!fileDesc)
-		{
-			qspRestoreCallState(&state);
-			return;
-		}
-
+		qspSaveCallState(&state, QSP_FALSE, QSP_FALSE);
+		(*javaEnv)->CallVoidMethod(javaEnv, ndkApiObject, qspCallBacks[QSP_CALL_OPENGAME], jniFile, isAddLocs);
+		(*javaEnv)->DeleteLocalRef(javaEnv, jniFile);
 		qspRestoreCallState(&state);
-
-		if (fileDesc < 0) return;
-
-		if (qspIsExitOnError && qspErrorNum) return;
-		qspResetError();
-
-		if (qspIsDisableCodeExec) return;
-
-		const int native_fd = dup(fileDesc);
-		if (native_fd < 0) return;
-
-		FILE *f = fdopen(native_fd, "rb");
-		if (f == NULL)
-		{
-			close(native_fd);
-			qspSetError(QSP_ERR_FILENOTFOUND);
-			return;
-		}
-
-		qspOpenQuestFromFILE(f, fileName, isAddLocs);
-
-		fclose(f);
 	}
 }
-
-#endif
 
 void qspCallOpenGame(QSP_CHAR* file)
 {
