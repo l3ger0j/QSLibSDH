@@ -47,9 +47,7 @@
 	void qspCallSetInputStrText(QSP_CHAR *);
 	void qspCallAddMenuItem(QSP_CHAR *, QSP_CHAR *);
 	void qspCallSystem(QSP_CHAR *);
-	#ifdef __ANDROID__
 	void qspCallOpenQuest(QSP_CHAR *, QSP_BOOL);
-	#endif
 	void qspCallOpenGame(QSP_CHAR *);
 	void qspCallSaveGame(QSP_CHAR *);
 	void qspCallShowMessage(QSP_CHAR *);
