@@ -290,26 +290,26 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_restartGame
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
  * Method:    loadGameWorldFromData
- * Signature: ([BLjava/lang/String;)Z
+ * Signature: ([BLjava/lang/String;Z)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData
-  (JNIEnv *, jobject, jbyteArray, jstring);
+  (JNIEnv *, jobject, jbyteArray, jstring, jboolean);
 
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
  * Method:    loadGameWorldFromFD
- * Signature: (ILjava/lang/String;)Z
+ * Signature: (ILjava/lang/String;Z)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD
-  (JNIEnv *, jobject, jint, jstring);
+  (JNIEnv *, jobject, jint, jstring, jboolean);
 
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH
  * Method:    loadGameWorldFromPath
- * Signature: (Ljava/lang/String;Ljava/lang/String;)Z
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Z)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromPath
-  (JNIEnv *, jobject, jstring, jstring);
+  (JNIEnv *, jobject, jstring, jstring, jboolean);
 
 /*
  * Class:     com_libsdhqs_jni_QSLibSDH

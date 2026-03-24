@@ -517,7 +517,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env
 /* Working with FileDescriptor */
 
 /* Loading a new game from FileDescriptor */
-JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jstring fileName)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jstring fileNam, jboolean isRefresh)
 {
 	if (fileDescriptor < 0) return QSP_FALSE;
 
@@ -539,7 +539,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 
 	QSP_CHAR* name = ndkFromJavaString(env, fileName);
 
-	qspOpenQuestFromFILE(f, name, QSP_FALSE);
+	qspOpenQuestFromFILE(f, name, isRefresh);
 
 	fclose(f);
 	free(name);
@@ -610,8 +610,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JN
 /* Working with file */
 
 /* Loading a new game from file */
-
-JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromPath(JNIEnv *env, jobject this, jstring filePath, jstring fileName)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromPath(JNIEnv *env, jobject this, jstring filePath, jstring fileName, jboolean isRefresh)
 {
 	if (filePath == NULL) return QSP_FALSE;
 
@@ -632,7 +631,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromPath(
 		return QSP_FALSE;
 	}
 
-	qspOpenQuestFromFILE(f, name, QSP_FALSE);
+	qspOpenQuestFromFILE(f, name, isRefresh);
 
 	fclose(f);
 	free(path);
@@ -710,7 +709,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromPath(
 /* Working with memory */
 
 /* Loading a new game from memory */
-JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName, jboolean isRefresh)
 {
 	if (data == NULL || fileName == NULL) return QSP_FALSE;
 
@@ -731,7 +730,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromData(
 
 	QSP_CHAR* name = ndkFromJavaString(env, fileName);
 
-	qspOpenQuestFromData(ptr, dataSize + 3, name, QSP_FALSE);
+	qspOpenQuestFromData(ptr, dataSize + 3, name, isRefresh);
 
 	free(name);
 	free(ptr);
