@@ -517,7 +517,7 @@ JNIEXPORT void JNICALL Java_com_libsdhqs_jni_QSLibSDH_selectMenuItem(JNIEnv *env
 /* Working with FileDescriptor */
 
 /* Loading a new game from FileDescriptor */
-JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jstring fileNam, jboolean isRefresh)
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jstring fileName, jboolean isRefresh)
 {
 	if (fileDescriptor < 0) return QSP_FALSE;
 
