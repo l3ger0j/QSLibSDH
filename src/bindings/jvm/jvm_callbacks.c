@@ -92,7 +92,6 @@ void qspCallRefreshInt(QSP_BOOL isRedraw)
 
 void qspCallSetInputStrText(QSP_CHAR* text)
 {
-	if (text == NULL) return;
 	if (qspCallBacks[QSP_CALL_SETINPUTSTRTEXT])
 	{
 		QSPCallState state;
@@ -172,7 +171,6 @@ void qspCallOpenGame(QSP_CHAR* file)
 
 void qspCallSaveGame(QSP_CHAR* file)
 {
-	if (file == NULL) return;
 	if (qspCallBacks[QSP_CALL_SAVEGAMESTATUS]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
@@ -187,7 +185,6 @@ void qspCallSaveGame(QSP_CHAR* file)
 
 void qspCallShowMessage(QSP_CHAR* text)
 {
-	if (text == NULL) return;
 	if (qspCallBacks[QSP_CALL_SHOWMSGSTR]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
@@ -214,7 +211,6 @@ void qspCallShowMenu()
 
 void qspCallShowPicture(QSP_CHAR* file)
 {
-	if (file == NULL) return;
 	if (qspCallBacks[QSP_CALL_SHOWIMAGE]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = ndkGetJniEnv();
@@ -302,7 +298,6 @@ int qspCallGetMSCount(void)
 
 void qspCallCloseFile(QSP_CHAR* file)
 {
-	if (file == NULL) return;
 	if (qspCallBacks[QSP_CALL_CLOSEFILE])
 	{
 		QSPCallState state;
@@ -330,7 +325,6 @@ void qspCallDeleteMenu(void)
 
 QSP_CHAR* qspCallInputBox(QSP_CHAR* text)
 {
-	if (text == NULL) return qspGetNewText(QSP_FMT(""), 0);
 	if (qspCallBacks[QSP_CALL_INPUTBOX]) {
 		QSPCallState state;
 		QSP_CHAR* buffer;
